@@ -4,6 +4,7 @@ import {BrowserRouter,Route,Routes} from 'react-router-dom'
 import Wardrobe from './pages/Wardrobe'
 import CommunityExchange from './pages/CommunityExchange'
 import Trade from './pages/Trade'
+import Compare from './pages/Compare'
 
 
 function App() {
@@ -13,8 +14,8 @@ function App() {
     <Routes>
       <Route path='/' element={<Homepage></Homepage>}></Route>
       <Route path='/wardrobe' element={<Wardrobe></Wardrobe>}></Route>
-      <Route path='/communityexchange' element={<CommunityExchange></CommunityExchange>}></Route>
-      <Route path='/trade' element={<Trade></Trade>}></Route>
+      <Route path='/compare' element={<Compare></Compare>}></Route>
+      <Route path='/Community' element={<CommunityExchange></CommunityExchange>}></Route>
       </Routes>
     </BrowserRouter>
 
