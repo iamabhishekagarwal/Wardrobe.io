@@ -12,10 +12,10 @@ const Navbar = () => {
         <ul className="flex space-x-8 text-white">
           <li className="hover:text-gray-400"><a href="/">Home</a></li>
           <li className="hover:text-gray-400"><a href="/wardrobe">Wardrobe</a></li>
-          <li className="hover:text-gray-400"><a href="/communityexchange">Compare</a></li>
-          <li className="hover:text-gray-400"><a href="/trade">Trade</a></li>
+          <li className="hover:text-gray-400"><a href="#">Compare</a></li>
+          <li className="hover:text-gray-400"><a href="/Trade">Trade</a></li>
         </ul>
-        {isAuthenticated?<><button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+        {isAuthenticated ? <><button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
           Logout
         </button></>:<><button onClick={() => loginWithRedirect()} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
           Login

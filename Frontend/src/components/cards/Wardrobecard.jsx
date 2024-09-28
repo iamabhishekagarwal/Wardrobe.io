@@ -119,7 +119,6 @@ const Wardrobecard = () => {
               className="absolute top-2 right-2 bg-white text-black rounded-full p-2"
               onClick={closeModal}
             >
-              &times;
             </button>
           </div>
         </div>
