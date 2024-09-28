@@ -21,23 +21,53 @@ const colorDistance = (rgb1, rgb2) => {
       Math.pow(rgb1.blue - rgb2.blue, 2)
     );
   };
-
+  
+  // Expanded color map with more accurate colors and shades
   const colorMap = [
     { name: 'black', rgb: { red: 0, green: 0, blue: 0 } },
     { name: 'white', rgb: { red: 255, green: 255, blue: 255 } },
-    { name: 'red', rgb: { red: 255, green: 0, blue: 0 } },
-    { name: 'blue', rgb: { red: 0, green: 0, blue: 255 } },
-    { name: 'green', rgb: { red: 0, green: 255, blue: 0 } },
-    { name: 'yellow', rgb: { red: 255, green: 255, blue: 0 } },
-    { name: 'purple', rgb: { red: 128, green: 0, blue: 128 } },
-    { name: 'orange', rgb: { red: 255, green: 165, blue: 0 } },
-    { name: 'pink', rgb: { red: 255, green: 192, blue: 203 } },
     { name: 'gray', rgb: { red: 128, green: 128, blue: 128 } },
-    { name: 'brown', rgb: { red: 165, green: 42, blue: 42 } },
+    { name: 'light gray', rgb: { red: 211, green: 211, blue: 211 } },
+    { name: 'dark gray', rgb: { red: 64, green: 64, blue: 64 } },
+    { name: 'red', rgb: { red: 255, green: 0, blue: 0 } },
+    { name: 'dark red', rgb: { red: 139, green: 0, blue: 0 } },
+    { name: 'light red', rgb: { red: 255, green: 102, blue: 102 } },
+    { name: 'blue', rgb: { red: 0, green: 0, blue: 255 } },
+    { name: 'dark blue', rgb: { red: 0, green: 0, blue: 139 } },
+    { name: 'light blue', rgb: { red: 173, green: 216, blue: 230 } },
+    { name: 'green', rgb: { red: 0, green: 255, blue: 0 } },
+    { name: 'dark green', rgb: { red: 0, green: 100, blue: 0 } },
+    { name: 'light green', rgb: { red: 144, green: 238, blue: 144 } },
+    { name: 'yellow', rgb: { red: 255, green: 255, blue: 0 } },
+    { name: 'dark yellow', rgb: { red: 204, green: 204, blue: 0 } },
+    { name: 'light yellow', rgb: { red: 255, green: 255, blue: 153 } },
+    { name: 'purple', rgb: { red: 128, green: 0, blue: 128 } },
+    { name: 'light purple', rgb: { red: 216, green: 191, blue: 216 } },
+    { name: 'pink', rgb: { red: 255, green: 192, blue: 203 } },
+    { name: 'dark pink', rgb: { red: 231, green: 84, blue: 128 } },
     { name: 'cyan', rgb: { red: 0, green: 255, blue: 255 } },
     { name: 'magenta', rgb: { red: 255, green: 0, blue: 255 } },
   ];
-
+  
+  // Mapping similar shades to their base color
+  const baseColorMap = {
+    'dark red': 'red',
+    'light red': 'red',
+    'dark pink': 'pink',
+    'light pink': 'pink',
+    'dark blue': 'blue',
+    'light blue': 'blue',
+    'dark green': 'green',
+    'light green': 'green',
+    'dark yellow': 'yellow',
+    'light yellow': 'yellow',
+    'dark gray': 'gray',
+    'light gray': 'gray',
+    'dark purple': 'purple',
+    'light purple': 'purple',
+  };
+  
+  // Function to find the closest color name from the color map
   const rgbToColorName = (rgb) => {
     let closestColor = null;
     let minDistance = Infinity;
@@ -50,7 +80,8 @@ const colorDistance = (rgb1, rgb2) => {
       }
     }
   
-    return closestColor || 'unknown'; // Return 'unknown' if no match is found
+    // Map the closest color to its base color (e.g., 'dark red' → 'red')
+    return baseColorMap[closestColor] || closestColor || 'unknown';
   };
 
 const upload = multer({ dest: 'uploads/' });
@@ -247,11 +278,22 @@ routerU.post('/compare-images', async(req, res) => {
     const detectedColorName = rgbToColorName(dominantColor);
   
     // Extract the type from the labels
-    const detectedType = visionResponse.labels.find((label) =>
-      label.toLowerCase() === 'shirt' || label.toLowerCase() === 't-shirt' || label.toLowerCase() === 'trousers' || label.toLowerCase() === 'jeans' || label.toLowerCase() === 'shorts' || label.toLowerCase() === 'sneakers' || label.toLowerCase() === 'hiking shoe' || label.toLowerCase() === 'walking shoe' || label.toLowerCase() === 'sportswear' || label.toLowerCase() === 'denim'
-    );
+    const detectedType = visionResponse.labels.find((label) => {
+        let labelLower = label.toLowerCase();
+
+        // If the label contains 'shirt' in any form, map it to 'shirt'
+        if (labelLower.includes('shirt')) {
+            console.log('Detected Shirt Label:', labelLower);  // Debugging log
+            return 'shirt'; // Map any label containing 'shirt' to 'shirt'
+        } else if (['t-shirt', 'trousers', 'jeans', 'shorts', 'sneakers', 'hiking shoe', 'walking shoe', 'sportswear', 'denim'].includes(labelLower)) {
+            return labelLower; // If the label exactly matches one of these, return it
+        }
+        return null;
+    });
   
     // Filter database items that match the detected color and type
+    console.log(detectedColorName)
+    console.log(detectedType)
     const matchingItems = databaseItems.filter((item) => {
       const isColorMatch = item.color.toLowerCase() === detectedColorName.toLowerCase();
       const isTypeMatch = item.type.toLowerCase() === detectedType?.toLowerCase();

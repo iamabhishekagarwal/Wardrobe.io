@@ -5,7 +5,7 @@ import axiosInstance from '../api/AxiosInstance';
 function Compare() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [databaseImages, setDatabaseImages] = useState([]);
-
+  const [imageUrl , setImageUrl] = useState(undefined);
   // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0]; // Get the first selected file
@@ -58,10 +58,13 @@ function Compare() {
             "Content-Type" : 'application/json'
         }
       })
-      console.log(response2.data)
+      if(response2.data[0].imageUrl !== undefined){
+        setImageUrl(response2.data[0].imageUrl)
+      }
+      console.log(response2.data[0].imageUrl)
     }
-    catch{
-        console.log("Error comparing images");
+    catch(e){
+        console.log("Error comparing images "+e);
     }
 
   }
@@ -85,7 +88,7 @@ function Compare() {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl text-black text-center font-bold mb-2">Compare Images</h1>
+        <h1 className="text-4xl text-black text-center font-bold mb-2">Compare Image</h1>
 
         {/* Upload Section */}
         <div className="pt-4 flex justify-center mb-8">
@@ -117,7 +120,7 @@ function Compare() {
         )}
 
         {/* Display Database Images */}
-        <h2 className="text-2xl font-semibold text-center mb-6">Database Images</h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">Database Image</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {databaseImages.length > 0 ? (
             databaseImages.map((image, index) => (
@@ -134,8 +137,19 @@ function Compare() {
             ))
           ) : (
             <div className="col-span-4 text-center text-gray-500">
-              No images found in the database.
-            </div>
+  {imageUrl === undefined ? (
+    <div>No image found in the database</div>
+  ) : (
+    <div className="flex justify-center">
+      <img
+        src={`http://localhost:5172${imageUrl}`}
+        alt="Compared Image"
+        className="w-full max-w-xs h-auto rounded-lg shadow-lg border border-gray-300"
+      />
+    </div>
+  )}
+</div>
+
           )}
         </div>
       </div>
