@@ -8,9 +8,12 @@ import { ImageAnnotatorClient } from '@google-cloud/vision';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+
 dotenv.config();
 const routerU = express.Router();
 const prismaU = new PrismaClient();
+
+
 const colorDistance = (rgb1, rgb2) => {
     return Math.sqrt(
       Math.pow(rgb1.red - rgb2.red, 2) +
@@ -18,10 +21,8 @@ const colorDistance = (rgb1, rgb2) => {
       Math.pow(rgb1.blue - rgb2.blue, 2)
     );
   };
-const upload = multer({ dest: 'uploads/' });
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const colorMap = [
+
+  const colorMap = [
     { name: 'black', rgb: { red: 0, green: 0, blue: 0 } },
     { name: 'white', rgb: { red: 255, green: 255, blue: 255 } },
     { name: 'red', rgb: { red: 255, green: 0, blue: 0 } },
@@ -36,10 +37,11 @@ const colorMap = [
     { name: 'cyan', rgb: { red: 0, green: 255, blue: 255 } },
     { name: 'magenta', rgb: { red: 255, green: 0, blue: 255 } },
   ];
-const rgbToColorName = (rgb) => {
+
+  const rgbToColorName = (rgb) => {
     let closestColor = null;
     let minDistance = Infinity;
-
+  
     for (let color of colorMap) {
       const distance = colorDistance(rgb, color.rgb);
       if (distance < minDistance) {
@@ -47,9 +49,14 @@ const rgbToColorName = (rgb) => {
         closestColor = color.name;
       }
     }
-
+  
     return closestColor || 'unknown'; // Return 'unknown' if no match is found
   };
+
+const upload = multer({ dest: 'uploads/' });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const client = new ImageAnnotatorClient({
   apiKey: process.env.GOOGLE_API_KEY, // Replace with your actual API key
 });
@@ -196,33 +203,6 @@ routerU.get('/users/:id', async (req, res) => {
     }
 });
 
-routerU.post('/compare-images', async(req, res) => {
-    const {userId,visionResponse} = req.body
-
-    const databaseItems = await prismaU.wardrobeItem.findMany({
-        where: { userId: userId },
-      });
-    // Extract the first dominant color from the Google Cloud Vision response
-    const dominantColor = visionResponse.dominantColors[0];
-    const detectedColorName = rgbToColorName(dominantColor);
-
-    // Extract the type from the labels
-    const detectedType = visionResponse.labels.find((label) =>
-      label.toLowerCase() === 'shirt'  ||label.toLowerCase() === 't-shirt' || label.toLowerCase() === 'pant'
-    );
-
-    // Filter database items that match the detected color and type
-    const matchingItems = databaseItems.filter((item) => {
-      const isColorMatch = item.color.toLowerCase() === detectedColorName.toLowerCase();
-      const isTypeMatch = item.type.toLowerCase() === detectedType?.toLowerCase();
-      return isColorMatch && isTypeMatch;
-    });
-
-    // Return the matching items to the frontend
-    res.json(matchingItems);
-  });
-
-
 // Update a user by ID
 routerU.put('/users/:id', async (req, res) => {
     const { email, name } = req.body;
@@ -254,6 +234,34 @@ routerU.delete('/users/:id', async (req, res) => {
         res.status(500).json({ msg: "Error deleting user" });
     }
 });
+
+
+routerU.post('/compare-images', async(req, res) => {
+    const {userId,visionResponse} = req.body
+   
+    const databaseItems = await prismaU.wardrobeItem.findMany({
+        where: { userId: userId },  
+      });
+    // Extract the first dominant color from the Google Cloud Vision response
+    const dominantColor = visionResponse.dominantColors[0];
+    const detectedColorName = rgbToColorName(dominantColor);
+  
+    // Extract the type from the labels
+    const detectedType = visionResponse.labels.find((label) =>
+      label.toLowerCase() === 'shirt' || label.toLowerCase() === 't-shirt' || label.toLowerCase() === 'trousers' || label.toLowerCase() === 'jeans' || label.toLowerCase() === 'shorts' || label.toLowerCase() === 'sneakers' || label.toLowerCase() === 'hiking shoe' || label.toLowerCase() === 'walking shoe' || label.toLowerCase() === 'sportswear' || label.toLowerCase() === 'denim'
+    );
+  
+    // Filter database items that match the detected color and type
+    const matchingItems = databaseItems.filter((item) => {
+      const isColorMatch = item.color.toLowerCase() === detectedColorName.toLowerCase();
+      const isTypeMatch = item.type.toLowerCase() === detectedType?.toLowerCase();
+      return isColorMatch && isTypeMatch;
+    });
+  
+    // Return the matching items to the frontend
+    res.json(matchingItems);
+  });
+
 
 // Export the router
 export default routerU;
