@@ -18,7 +18,7 @@ const Homepage = () => {
           <h2 className="text-6xl font-bold mb-6 text-gray-50 leading-tight drop-shadow-lg">
             <Typewriter text="Simplify Your Wardrobe. Promote Sustainability." speed={70} />
           </h2>
-          <p className="text-xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl mb-8  text-semibold text-gray-200 max-w-2xl mx-auto leading-relaxed">
             Organize your wardrobe, track usage, and make sustainable choices to reduce overconsumption and maximize the value of your items.
           </p>
           <a
