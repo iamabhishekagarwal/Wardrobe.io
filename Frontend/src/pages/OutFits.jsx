@@ -68,8 +68,9 @@ function OutFits() {
   if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
   return (
-    <div className="bg-gray-100 min-h-screen py-6">
+    <>
       <Navbar />
+    <div className="bg-gray-100 min-h-screen py-6">
 
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
@@ -116,6 +117,7 @@ function OutFits() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

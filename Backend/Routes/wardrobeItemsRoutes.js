@@ -189,6 +189,41 @@ routerW.post('/updateSelected', async (req, res) => {
       res.status(500).json({ error: "Failed to fetch maximum counts", details: error.message });
     }
   });
+
+  routerW.get('/minCounts', async (req, res) => {
+    try {
+      // Get the wardrobe item with the minimum count for 'top'
+      const minTop = await prismaW.wardrobeItem.findFirst({
+        where: { category: 'top' },
+        orderBy: { count: 'asc' },  // Order by count in ascending order
+        take: 1,  // Take the top result
+      });
+  
+      // Get the wardrobe item with the minimum count for 'bottom'
+      const minBottom = await prismaW.wardrobeItem.findFirst({
+        where: { category: 'bottom' },
+        orderBy: { count: 'asc' },
+        take: 1,
+      });
+  
+      // Get the wardrobe item with the minimum count for 'shoes'
+      const minShoes = await prismaW.wardrobeItem.findFirst({
+        where: { category: { equals: 'shoe', mode: 'insensitive' } },
+        orderBy: { count: 'asc' },
+        take: 1,
+      });
+      
+      // Return the items with the minimum count for each type
+      res.status(200).json({
+        minTop: minTop || null,       // Return null if no top found
+        minBottom: minBottom || null, // Return null if no bottom found
+        minShoes: minShoes || null,   // Return null if no shoes found
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch minimum counts", details: error.message });
+    }
+  });
+      
   
   
   
