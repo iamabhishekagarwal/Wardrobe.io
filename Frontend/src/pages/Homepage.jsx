@@ -3,6 +3,7 @@ import Navbar from '../components/navbar/Navbar'; // Assuming Navbar is already 
 import image1 from '../assets/image1.webp'; // Add your own image path
 import Typewriter from '../components/Typewriter'; // Include this file as a component
 import axiosInstance from '../api/AxiosInstance';
+import Footer from '../components/footer/footer';
 const Homepage = () => {
   const [items, setItems] = useState([]);
 
@@ -137,6 +138,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
+      <Footer></Footer>
     </div>
   );
 };
