@@ -9,25 +9,31 @@ const routerO = express.Router();
 const prismaO = new PrismaClient();
 
 async function suggestOutfit(clothes) {
-  let outfits = [];
-
-  clothes.tops.forEach((top) => {
-    clothes.bottoms.forEach((bottom) => {
-      clothes.shoes.forEach((shoe) => {
-        if (top.type === bottom.type && bottom.type === shoe.type) {
-          // Matching type
-          outfits.push({
-            top: top.name,
-            bottom: bottom.name,
-            shoes: shoe.name,
-          });
-        }
+    let outfits = [];
+    // Filter clothes by category and occasion
+    const tops = clothes.filter(item => item.category === 'top');
+    const bottoms = clothes.filter(item => item.category === 'bottom');
+    const shoes = clothes.filter(item => item.category === 'shoe');
+    // Generate outfits based on matching occasion
+    tops.forEach((top) => {
+      bottoms.forEach((bottom) => {
+        shoes.forEach((shoe) => {
+          // Check if the occasion matches
+          if (top.occasion === bottom.occasion && bottom.occasion === shoe.occasion) {
+            outfits.push({
+              top: top.name,
+              bottom: bottom.name,
+              shoes: shoe.name,
+              occasion: top.occasion // Add occasion to the outfit
+            });
+          }
+        });
       });
     });
-  });
-
-  return outfits;
-}
+  
+    return outfits;
+  }
+  
 
 routerO.post("/generateOutfits", async (req, res) => {
   const { userId } = req.body;
