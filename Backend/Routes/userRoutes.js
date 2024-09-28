@@ -3,16 +3,51 @@ import express from "express";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
+import multer from 'multer';
+import { ImageAnnotatorClient } from '@google-cloud/vision';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 const routerU = express.Router();
 const prismaU = new PrismaClient();
 
-// Define a Zod schema for input validation
-const userSchema = z.object({
-    email: z.string().email(),
-    name: z.string().optional(),
+const upload = multer({ dest: 'uploads/' });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const client = new ImageAnnotatorClient({
+  apiKey: process.env.GOOGLE_API_KEY, // Replace with your actual API key
 });
+const prisma = new PrismaClient();
+const userSchema = z.object({
+    username: z.string(),
+    email: z.string().email(),
+  });
+  routerU.post('/item/upload', upload.single('image'), async (req, res) => {
+    try {
+      const filePath = req.file.path;
+      
+      // Perform image label detection
+      const [result] = await client.labelDetection(filePath);
+      const labels = result.labelAnnotations.map(label => label.description);
+  
+      // Perform image color detection
+      const [colorResult] = await client.imageProperties(filePath);
+      const colors = colorResult.imagePropertiesAnnotation.dominantColors.colors.map(
+        color => color.color
+      );
+  
+      // Combine extracted information (e.g., labels, colors)
+      res.json({
+        labels,
+        dominantColors: colors,
+      });
+    } catch (error) {
+      console.error('Error processing image:', error);
+      res.status(500).send('Error processing image');
+    }
+  });
 
 // Function to insert a user into the database
 async function insertUser(data) {
