@@ -93,8 +93,8 @@ const client = new ImageAnnotatorClient({
 });
 const prisma = new PrismaClient();
 const userSchema = z.object({
-    username: z.string(),
     email: z.string().email(),
+    username: z.string(),
   });
   routerU.post('/item/upload', upload.single('image'), async (req, res) => {
     try {
@@ -150,12 +150,6 @@ async function verifyUser(email) {
 // Signup endpoint
 routerU.post("/signup", async (req, res) => {
     const { email, name } = req.body;
-
-    const inputValidation = userSchema.safeParse({ email, name });
-    if (!inputValidation.success) {
-        return res.status(400).json({ msg: "Inputs are not valid" });
-    }
-
     try {
         const user = await insertUser({ email, name });
         res.status(201).json({ msg: "User created successfully", id: user.id });

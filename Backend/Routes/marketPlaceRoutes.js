@@ -15,7 +15,7 @@ const requireUserId = (req, res, next) => {
 };
 
 // Endpoint to sell an item
-routerM.post("/marketplace/sell", requireUserId, async (req, res) => {
+routerM.post("/sell", requireUserId, async (req, res) => {
   const { userId, wardrobeItemId, price } = req.body;
 
   try {
@@ -35,7 +35,7 @@ routerM.post("/marketplace/sell", requireUserId, async (req, res) => {
 });
 
 // Endpoint to donate an item
-routerM.post("/marketplace/donate", requireUserId, async (req, res) => {
+routerM.post("/donate", requireUserId, async (req, res) => {
   const { userId, wardrobeItemId } = req.body;
 
   try {
@@ -54,7 +54,7 @@ routerM.post("/marketplace/donate", requireUserId, async (req, res) => {
 });
 
 // Endpoint to rent an item
-routerM.post("/marketplace/rent", requireUserId, async (req, res) => {
+routerM.post("/rent", requireUserId, async (req, res) => {
   const { userId, wardrobeItemId, rentalPrice } = req.body;
 
   try {
@@ -74,7 +74,7 @@ routerM.post("/marketplace/rent", requireUserId, async (req, res) => {
 });
 
 // Endpoint to buy an item
-routerM.post("/marketplace/buy", requireUserId, async (req, res) => {
+routerM.post("/buy", requireUserId, async (req, res) => {
   const { userId, marketplaceItemId } = req.body;
 
   try {
@@ -93,7 +93,7 @@ routerM.post("/marketplace/buy", requireUserId, async (req, res) => {
 });
 
 // Endpoint to receive a donation
-routerM.post("/marketplace/donate/receive", requireUserId, async (req, res) => {
+routerM.post("/donate/receive", requireUserId, async (req, res) => {
   const { userId, marketplaceItemId } = req.body;
 
   try {
@@ -112,7 +112,7 @@ routerM.post("/marketplace/donate/receive", requireUserId, async (req, res) => {
 });
 
 // Endpoint to take an item on rent
-routerM.post("/marketplace/rent/take", requireUserId, async (req, res) => {
+routerM.post("/rent/take", requireUserId, async (req, res) => {
   const { userId, marketplaceItemId } = req.body;
 
   try {
@@ -127,6 +127,40 @@ routerM.post("/marketplace/rent/take", requireUserId, async (req, res) => {
     res.status(200).json(updatedItem);
   } catch (error) {
     res.status(500).json({ error: "Failed to take the item on rent." });
+  }
+});
+
+// Endpoint to get all marketplace items by status
+routerM.get("/items/status/:status", async (req, res) => {
+  const { status } = req.params;
+
+  try {
+    const items = await prismaM.marketplaceItem.findMany({
+      where: {
+        status: status.toUpperCase(), // Ensure status is in uppercase to match enum
+      },
+    });
+
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve items by status." });
+  }
+});
+
+// Endpoint to get all marketplace items by transaction type
+routerM.get("/items/type/:type", async (req, res) => {
+  const { type } = req.params;
+
+  try {
+    const items = await prismaM.marketplaceItem.findMany({
+      where: {
+        transactionType: type.toUpperCase(), // Ensure type is in uppercase to match enum
+      },
+    });
+
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve items by transaction type." });
   }
 });
 
