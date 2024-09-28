@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from '../api/AxiosInstance';
 import Navbar from "../components/navbar/Navbar";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const WardrobeAnalyticsDashboard = () => {
+  const {isAuthenticated} = useAuth0();
   const [maxItems, setMaxItems] = useState({
     maxTop: null,
     maxBottom: null,
@@ -66,7 +68,7 @@ const WardrobeAnalyticsDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="p-6 bg-gray-50 min-h-screen">
+      {isAuthenticated?<><div className="p-6 bg-gray-50 min-h-screen">
         <h2 className="text-4xl font-extrabold text-gray-800 mb-10 text-center">Wardrobe Insights</h2>
 
         {/* Most Worn Items */}
@@ -223,7 +225,10 @@ const WardrobeAnalyticsDashboard = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div></>:<div className="flex items-center justify-center h-screen">
+  <p className="text-center">Login to access this page</p>
+</div>}
+      
     </>
   );
 };
