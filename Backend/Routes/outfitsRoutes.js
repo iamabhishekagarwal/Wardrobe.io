@@ -42,13 +42,29 @@ routerO.post("/generateOutfits", async (req, res) => {
     const wardRobeItems = await prismaO.wardrobeItem.findMany({
       where: { userId: userId },
     });
-    console.log(wardRobeItems)
     let outfits = await suggestOutfit(wardRobeItems);
-    res.status(200).json({ outfits: outfits }); // Replace [] with the generated outfits array
+    res.status(200).json({ outfits: outfits });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch wardrobe items" });
   }
 });
+
+routerO.post("/randomOutfits",async(req,res)=>{
+  const { userId } = req.body;
+  try {
+    const wardRobeItems = await prismaO.wardrobeItem.findMany({
+      where: { userId: userId },
+    });
+    let outfits = await suggestOutfit(wardRobeItems);
+    if (outfits.length > 0) {
+      const randomIndex = Math.floor(Math.random() * outfits.length);
+          const randomOutfit = outfits[randomIndex];
+    res.status(200).json({ outfit: randomOutfit }); 
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to Make RandomOutfit" });
+  }
+})
 
 routerO.post("/outfits", async (req, res) => {
   const { userId, name, description } = req.body;
