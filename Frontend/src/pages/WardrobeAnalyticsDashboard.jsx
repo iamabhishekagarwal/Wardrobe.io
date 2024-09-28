@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from '../api/AxiosInstance';
 
+
 const WardrobeAnalyticsDashboard = () => {
+
   const [stats, setStats] = useState({
     totalItems: 0,
     totalWears: 0,
@@ -28,7 +30,9 @@ const WardrobeAnalyticsDashboard = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div>
+        
+    <div className="p-6 mt-20 bg-gray-50 min-h-screen">
       {/* Overall Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition duration-300 ease-in-out">
@@ -103,6 +107,8 @@ const WardrobeAnalyticsDashboard = () => {
           </table>
         </div>
       </div>
+    </div>
+    
     </div>
   );
 };

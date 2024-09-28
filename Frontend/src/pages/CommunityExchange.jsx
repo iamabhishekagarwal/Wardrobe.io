@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../components/navbar/Navbar";
+
 
 const items = [
   { id: 1, name: "Denim Jacket", type: "trade", condition: "Good", size: "M", image: "/placeholder.svg" },
@@ -34,7 +34,7 @@ const CommunityExchange = () => {
 
   return (
     <div>
-        <Navbar></Navbar>
+        
     <div className="container mx-auto p-4">
         
       {/* Header */}

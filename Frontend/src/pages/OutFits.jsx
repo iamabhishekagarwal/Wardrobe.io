@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../api/AxiosInstance";
 import OutfitCard from "../components/cards/OutFitCard";
 import Navbar from "../components/navbar/Navbar";
+
 function OutFits() {
   const [randoutfit, setRandoutfit] = useState(null);
-
   const [outfits, setOutfits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,33 +46,46 @@ function OutFits() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="text-center font-semibold">Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 text-center">Error: {error}</div>;
   }
 
   return (
-    <div>
-      <Navbar></Navbar>
+    <div className="bg-gray-100 min-h-screen">
+     
 
-      {/* Button to select a random outfit */}
-      <button onClick={selectRandomOutfit} style={{ marginBottom: "20px" }}>
-        Select Random Outfit
-      </button>
+      <div className="bg-grey-300 rounded-lg shadow-lg p-6 mt-12">
+        {/* Button to select a random outfit */}
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={selectRandomOutfit}
+            className="bg-teal-600 text-white text-2xl font-bold py-2 px-6 rounded-full shadow hover:bg-teal-800 transition duration-300 transform hover:scale-105"
+          >
+            Select Random Outfit
+          </button>
+        </div>
 
-      {/* Display the random outfit if selected */}
-      {randoutfit && <OutfitCard outfit={randoutfit} />}
+        {/* Display the random outfit if selected */}
+        {randoutfit && (
+          <div className="mb-8">
+            <h2 className="text-3xl  font-semibold text-center mb-4">Your Random Outfit</h2>
+            <OutfitCard outfit={randoutfit} />
+          </div>
+        )}
 
-      {/* Display the list of generated outfits */}
-      <div>
-        <h2>Generated Outfits</h2>
-
+        {/* Display the list of generated outfits */}
         <div>
-          {outfits.map((outfit, index) => (
-            <OutfitCard key={index} outfit={outfit} /> // Pass each outfit as a prop
-          ))}
+          <h2 className="text-4xl pt-6 pb-4 font-bold text-center mb-4">Generated Outfits</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {outfits.map((outfit, index) => (
+              <div className="hover:shadow-lg transition-shadow duration-300">
+                <OutfitCard key={index} outfit={outfit} /> {/* Pass each outfit as a prop */}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
