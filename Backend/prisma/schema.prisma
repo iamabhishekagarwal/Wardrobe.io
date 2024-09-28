@@ -10,9 +10,7 @@ datasource db {
 model User {
   id             Int            @id @default(autoincrement())
   email          String         @unique
-  passwordHash   String
   name           String?
-  profilePicture String?
   wardrobeItems  WardrobeItem[]
   outfits        Outfit[]
   itemUsages     ItemUsage[]
