@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../components/navbar/Navbar'; // Assuming Navbar is already present
 import image1 from '../assets/image1.webp'; // Add your own image path
 import Typewriter from '../components/Typewriter'; // Include this file as a component
+import Footer from '../components/footer/footer';
 
 const Homepage = () => {
   return (
@@ -102,6 +103,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
+      <Footer></Footer>
     </div>
   );
 };
