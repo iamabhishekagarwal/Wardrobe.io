@@ -16,4 +16,60 @@ model User {
   id    Int     @id @default(autoincrement())
   name  String
   email String  @unique
+  wardrobeItems    WardrobeItem[]
+  outfits          Outfit[]
+
+  ItemUsage ItemUsage[]
+}
+
+model WardrobeItem {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  name        String
+  category    String 
+  color       String ?
+  imageUrl    String ?
+  description String ?
+  tags        ItemTag[]
+  lastWorn    DateTime ?
+  outfitItems OutfitItem[]
+  usageLogs   ItemUsage[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Outfit {
+  id           Int           @id @default(autoincrement())
+  user         User          @relation(fields: [userId], references: [id])
+  userId       Int
+  name         String
+  description  String ?
+  outfitItems  OutfitItem[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+model ItemTag {
+  id             Int          @id @default(autoincrement())
+  wardrobeItem   WardrobeItem @relation(fields: [wardrobeItemId], references: [id])
+  wardrobeItemId Int
+  tag            String
+}
+
+
+model OutfitItem {
+  id             Int          @id @default(autoincrement())
+  outfit         Outfit       @relation(fields: [outfitId], references: [id])
+  outfitId       Int
+  wardrobeItem   WardrobeItem @relation(fields: [wardrobeItemId], references: [id])
+  wardrobeItemId Int
+}
+
+model ItemUsage {
+  id             Int          @id @default(autoincrement())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         Int
+  wardrobeItem   WardrobeItem @relation(fields: [wardrobeItemId], references: [id])
+  wardrobeItemId Int
+  wornAt         DateTime     @default(now())
 }
