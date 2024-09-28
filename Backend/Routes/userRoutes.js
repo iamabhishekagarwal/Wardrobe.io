@@ -8,9 +8,50 @@ import { ImageAnnotatorClient } from '@google-cloud/vision';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+
 dotenv.config();
 const routerU = express.Router();
 const prismaU = new PrismaClient();
+
+
+const colorDistance = (rgb1, rgb2) => {
+    return Math.sqrt(
+      Math.pow(rgb1.red - rgb2.red, 2) +
+      Math.pow(rgb1.green - rgb2.green, 2) +
+      Math.pow(rgb1.blue - rgb2.blue, 2)
+    );
+  };
+
+  const colorMap = [
+    { name: 'black', rgb: { red: 0, green: 0, blue: 0 } },
+    { name: 'white', rgb: { red: 255, green: 255, blue: 255 } },
+    { name: 'red', rgb: { red: 255, green: 0, blue: 0 } },
+    { name: 'blue', rgb: { red: 0, green: 0, blue: 255 } },
+    { name: 'green', rgb: { red: 0, green: 255, blue: 0 } },
+    { name: 'yellow', rgb: { red: 255, green: 255, blue: 0 } },
+    { name: 'purple', rgb: { red: 128, green: 0, blue: 128 } },
+    { name: 'orange', rgb: { red: 255, green: 165, blue: 0 } },
+    { name: 'pink', rgb: { red: 255, green: 192, blue: 203 } },
+    { name: 'gray', rgb: { red: 128, green: 128, blue: 128 } },
+    { name: 'brown', rgb: { red: 165, green: 42, blue: 42 } },
+    { name: 'cyan', rgb: { red: 0, green: 255, blue: 255 } },
+    { name: 'magenta', rgb: { red: 255, green: 0, blue: 255 } },
+  ];
+
+  const rgbToColorName = (rgb) => {
+    let closestColor = null;
+    let minDistance = Infinity;
+  
+    for (let color of colorMap) {
+      const distance = colorDistance(rgb, color.rgb);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestColor = color.name;
+      }
+    }
+  
+    return closestColor || 'unknown'; // Return 'unknown' if no match is found
+  };
 
 const upload = multer({ dest: 'uploads/' });
 const __filename = fileURLToPath(import.meta.url);
@@ -193,6 +234,34 @@ routerU.delete('/users/:id', async (req, res) => {
         res.status(500).json({ msg: "Error deleting user" });
     }
 });
+
+
+routerU.post('/compare-images', async(req, res) => {
+    const {userId,visionResponse} = req.body
+   
+    const databaseItems = await prismaU.wardrobeItem.findMany({
+        where: { userId: userId },  
+      });
+    // Extract the first dominant color from the Google Cloud Vision response
+    const dominantColor = visionResponse.dominantColors[0];
+    const detectedColorName = rgbToColorName(dominantColor);
+  
+    // Extract the type from the labels
+    const detectedType = visionResponse.labels.find((label) =>
+      label.toLowerCase() === 'shirt' || label.toLowerCase() === 't-shirt' || label.toLowerCase() === 'trousers' || label.toLowerCase() === 'jeans' || label.toLowerCase() === 'shorts' || label.toLowerCase() === 'sneakers' || label.toLowerCase() === 'hiking shoe' || label.toLowerCase() === 'walking shoe' || label.toLowerCase() === 'sportswear' || label.toLowerCase() === 'denim'
+    );
+  
+    // Filter database items that match the detected color and type
+    const matchingItems = databaseItems.filter((item) => {
+      const isColorMatch = item.color.toLowerCase() === detectedColorName.toLowerCase();
+      const isTypeMatch = item.type.toLowerCase() === detectedType?.toLowerCase();
+      return isColorMatch && isTypeMatch;
+    });
+  
+    // Return the matching items to the frontend
+    res.json(matchingItems);
+  });
+
 
 // Export the router
 export default routerU;
