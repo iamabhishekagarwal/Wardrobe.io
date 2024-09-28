@@ -37,13 +37,34 @@ function Compare() {
       });
   
       // Log the labels and dominant colors from the server response
+      console.log(response.data)
       console.log("Image Labels: ", response.data.labels);
       console.log("Dominant Colors: ", response.data.dominantColors);
+      Compare(response.data);
+      
     } catch (error) {
       console.log("Error uploading image", error);
     }
   };
   
+  const Compare = async(data) =>{
+    try{
+    const compareData = {
+        "userId" : 1,
+        "visionResponse" : data
+      }
+      const response2 = await axiosInstance.post("/compare-images",compareData,{
+        headers:{
+            "Content-Type" : 'application/json'
+        }
+      })
+      console.log(response2.data)
+    }
+    catch{
+        console.log("Error comparing images");
+    }
+
+  }
 
   // Fetch database images (placeholder)
   const fetchDatabaseImages = async () => {

@@ -5,6 +5,7 @@ import Wardrobe from './pages/Wardrobe'
 import CommunityExchange from './pages/CommunityExchange'
 import Trade from './pages/Trade'
 import Compare from './pages/Compare'
+import OutFits from './pages/OutFits'
 
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path='/' element={<Homepage></Homepage>}></Route>
-      <Route path='/wardrobe' element={<Wardrobe></Wardrobe>}></Route>
+      <Route path='/wardrobe' element={<OutFits></OutFits>}></Route>
       <Route path='/compare' element={<Compare></Compare>}></Route>
       <Route path='/Community' element={<CommunityExchange></CommunityExchange>}></Route>
       </Routes>
