@@ -1,9 +1,20 @@
-import React from 'react';
+import {React,useEffect,useState} from 'react';
 import Navbar from '../components/navbar/Navbar'; // Assuming Navbar is already present
 import image1 from '../assets/image1.webp'; // Add your own image path
 import Typewriter from '../components/Typewriter'; // Include this file as a component
-
+import axiosInstance from '../api/AxiosInstance';
 const Homepage = () => {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axiosInstance.get('/wardrobeItems/getAllItems')
+      .then(response => {
+        setItems(response.data); // Set the items array to the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching items:', error);
+      });
+  }, []);
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen font-sans">
       <Navbar />
@@ -31,7 +42,31 @@ const Homepage = () => {
           </a>
         </div>
       </section>
-
+      <section className="py-24 bg-white relative">
+        <div className="container mx-auto px-6">
+          <h3 className="text-5xl font-extrabold text-center mb-16 text-green-600 leading-tight">
+            Wardrobe Items
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {items.map(item => (
+              <div key={item.id} className="bg-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-2">
+                <img src={`http://localhost:5172${item.imageUrl}`} alt={item.name} className="mb-4 w-full h-64 object-cover rounded-md" />
+                <h4 className="text-2xl font-bold mb-2 text-green-600">{item.name}</h4>
+                <p className="text-gray-700 leading-relaxed">{item.description}</p>
+                <p className="text-sm text-gray-600">Category: {item.category}</p>
+                <p className="text-sm text-gray-600">Color: {item.color}</p>
+                <div className="flex mt-4 space-x-2">
+                  {item.tags.map(tag => (
+                    <span key={tag.id} className="text-xs bg-green-200 text-green-800 py-1 px-3 rounded-full">
+                      {tag.tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>     
       {/* Features Section */}
       <section id="features" className="py-24 bg-gray-100 relative">
         <div className="container mx-auto px-6">

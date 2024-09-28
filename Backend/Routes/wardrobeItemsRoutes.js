@@ -76,7 +76,7 @@ routerW.post('/addItems', upload.single('image'), async (req, res) => {
 // Fetch all wardrobe items
 routerW.get('/getAllItems', async (req, res) => {
     const {userId}=req.body;
-    const wardrobeItems = await prismaW.wardrobeItem.findMany({where:{userId:userId}});
+    const wardrobeItems = await prismaW.wardrobeItem.findMany({where:{userId:userId},include: { tags: true }});
     res.json(wardrobeItems);
 });
 
