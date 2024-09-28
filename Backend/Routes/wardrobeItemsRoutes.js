@@ -114,15 +114,12 @@ routerW.put('/updateItemByID/:id', upload.single('image'), async (req, res) => {
 // Delete a wardrobe item
 routerW.delete('/deleteItemByID/:id', async (req, res) => {
     try {
-        const userId = Number(req.params.id);
 
         // Ensure itemId is a valid number
-        if (isNaN(userId)) {
-            return res.status(400).json({ msg: "Invalid item ID" });
-        }
+    
 
-        await prismaW.wardrobeItem.deleteMany({ 
-            where: { userId: userId }  // Deleting by the primary key 'id', not userId
+        await prismaW.wardrobeItem.delete({ 
+            where: { id: Number(req.params.id) }   // Deleting by the primary key 'id', not userId
         });
         res.sendStatus(204); // Successful deletion, no content
     } catch (error) {
