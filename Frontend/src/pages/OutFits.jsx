@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from 'react';
-
+import axiosInstance from '../api/AxiosInstance';
+import OutfitCard from '../components/cards/OutFitCard';
+import Navbar from '../components/navbar/Navbar';
 function OutFits() {
+
   const [outfits, setOutfits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const generateOutfits = async () => {
       try {
-        const response = await fetch('http://localhost:5172/api/outfits/generateOutfits', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({userId:1 }),
+        const response = await axiosInstance.post('/outfits/generateOutfits', {
+          userId: 1, // Sending userId in the request body
         });
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        console.log(response.data)
-        setOutfits(response.outfits); // Assuming outfits is the key in the returned object
+        // Log the full response to inspect its structure
+
+        // Set outfits from the response
+        setOutfits(response.data.outfits); // Access outfits from response data
       } catch (error) {
-        setError(error.message);
+        setError(error.message); // Set the error message
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading
       }
     };
 
     generateOutfits();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -41,12 +38,13 @@ function OutFits() {
 
   return (
     <div>
+      <Navbar></Navbar>
       <h2>Generated Outfits</h2>
-      <ul>
-        {outfits.map((outfit, index) => (
-          <li key={index}>{outfit}</li> // Customize this to display outfit details
+      <div>
+      {outfits.map((outfit, index) => (
+          <OutfitCard key={index} outfit={outfit} /> // Pass each outfit as a prop
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
