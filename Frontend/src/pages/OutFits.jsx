@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/AxiosInstance';
 import OutfitCard from '../components/cards/OutFitCard';
+import Navbar from '../components/navbar/Navbar';
 function OutFits() {
+
   const [outfits, setOutfits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +38,7 @@ function OutFits() {
 
   return (
     <div>
+      <Navbar></Navbar>
       <h2>Generated Outfits</h2>
       <div>
       {outfits.map((outfit, index) => (
