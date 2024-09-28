@@ -6,8 +6,8 @@ import Wardrobe from './pages/Wardrobe'
 function App() {
    return (
     <>
-      {/* <Homepage></Homepage> */}
-      <Wardrobe></Wardrobe>
+      <Homepage></Homepage>
+      {/* <Wardrobe></Wardrobe> */}
     </>
   )
 }
