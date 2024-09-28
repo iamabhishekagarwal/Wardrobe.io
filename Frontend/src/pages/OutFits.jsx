@@ -4,6 +4,7 @@ import OutfitCard from "../components/cards/OutFitCard";
 
 function OutFits() {
   const [randoutfit, setRandoutfit] = useState(null);
+
   const [outfits, setOutfits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,6 +55,8 @@ function OutFits() {
 
   return (
     <div>
+          <Navbar></Navbar>
+
 
       {/* Button to select a random outfit */}
       <button onClick={selectRandomOutfit} style={{ marginBottom: "20px" }}>
@@ -73,7 +76,6 @@ function OutFits() {
     <OutfitCard key={index} outfit={outfit} /> // Pass each outfit as a prop
   ))}
 </div>
-     </div>
     </div>
   );
 }

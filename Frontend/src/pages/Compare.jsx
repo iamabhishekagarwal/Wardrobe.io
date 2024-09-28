@@ -30,7 +30,7 @@ function Compare() {
     formData.append("image", file); // Append the image file with key "image"
   
     try {
-      const response = await axiosInstance.post("/item/upload", formData, {
+      const response = await axiosInstance.post("/user/item/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Needed for file uploads
         },
@@ -53,7 +53,7 @@ function Compare() {
         "userId" : 1,
         "visionResponse" : data
       }
-      const response2 = await axiosInstance.post("/compare-images",compareData,{
+      const response2 = await axiosInstance.post("/user/compare-images",compareData,{
         headers:{
             "Content-Type" : 'application/json'
         }
