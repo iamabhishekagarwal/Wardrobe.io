@@ -11,8 +11,8 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-white text-lg font-semibold">BrandName</div>
         <ul className="flex space-x-8 text-white">
-          <li className="hover:text-gray-400"><a href="#">Home</a></li>
-          <li className="hover:text-gray-400"><a href="#">Features</a></li>
+          <li className="hover:text-gray-400"><a href="/">Home</a></li>
+          <li className="hover:text-gray-400"><a href="/wardrobe">Wardrobe</a></li>
           <li className="hover:text-gray-400"><a href="#">Pricing</a></li>
           <li className="hover:text-gray-400"><a href="#">Contact</a></li>
         </ul>
