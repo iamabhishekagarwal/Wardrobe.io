@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, createContext, useContext } from 'react';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import Navbar from "../components/navbar/Navbar";
-
 
 const initialWardrobeData = [];
 
+// Context for 3D mouse interaction
 const MouseEnterContext = createContext(undefined);
 
 export const useMouseEnter = () => {
@@ -126,9 +127,9 @@ const Wardrobe = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-0"> {/* Set py to 0 to eliminate space */}
-      <Navbar /> {/* Add Navbar here */}
-      <div className="container mx-auto py-10"> {/* Add padding only here */}
+    <div className="bg-gray-50 min-h-screen py-0">
+      <Navbar />
+      <div className="container mx-auto py-10">
         <h1 className="text-4xl text-center font-bold mb-8">Explore Your Wardrobe</h1>
 
         <div className="text-center mb-6">
@@ -152,15 +153,17 @@ const Wardrobe = () => {
             <CardContainer key={data.id}>
               <CardBody>
                 <CardItem>
-                  <img
-                    src={data.img}
-                    alt={data.title}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                  <div className="mt-4 text-center">
-                    <h3 className="text-lg font-semibold text-gray-800">{data.title}</h3>
-                    <p className="text-sm text-gray-600">{data.author}</p>
-                  </div>
+                  <Link to={`/wardrobe/${data.id}`} className="flex flex-col h-full">
+                    <img
+                      src={data.img}
+                      alt={data.title}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                    <div className="mt-4 text-center">
+                      <h3 className="text-lg font-semibold text-gray-800">{data.title}</h3>
+                      <p className="text-sm text-gray-600">{data.author}</p>
+                    </div>
+                  </Link>
                 </CardItem>
               </CardBody>
             </CardContainer>
