@@ -8,85 +8,112 @@ function OutFits() {
   const [outfits, setOutfits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedOutfit, setSelectedOutfit] = useState(null);
 
-  // Function to fetch outfits
+  // Fetch outfits
   const generateOutfits = async () => {
     try {
-      setLoading(true); // Set loading to true when generating outfits
-      const response = await axiosInstance.post("/outfits/generateOutfits", {
-        userId: 1, // Sending userId in the request body
-      });
-
-      // Set outfits from the response
-      setOutfits(response.data.outfits); // Access outfits from response data
-    } catch (error) {
-      setError(error.message); // Set the error message
-    } finally {
-      setLoading(false); // Stop loading
-    }
-  };
-
-  // Function to select a random outfit
-  const selectRandomOutfit = async () => {
-    try {
       setLoading(true);
-      const response = await axiosInstance.post("/outfits/randomOutfits", {
-        userId: 1, // Sending userId in the request body
+      const response = await axiosInstance.post("/outfits/generateOutfits", {
+        userId: 1,
       });
-      setRandoutfit(response.data.outfit); // Set the random outfit
+      setOutfits(response.data.outfits);
+      console.log(response.data.outfits)
     } catch (error) {
-      setError(error.message); // Set the error message
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // Select random outfit
+  const selectRandomOutfit = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post("/outfits/randomOutfits", {
+        userId: 1,
+      });
+      setRandoutfit(response.data.outfit);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle outfit selection
+  const handleSelectOutfit = async(outfit,top,bottom,shoes) => {
+    setSelectedOutfit(outfit);
+    console.log(top)
+    console.log(bottom)
+    console.log(shoes)
+    try{
+      const response = await axiosInstance.post("/wardrobeItems/updateSelected",{
+        top,
+        bottom,
+        shoes
+      }
+      )
+    }
+    catch(e){
+      console.log("Error sending top bottom shoe")
+    }
+  };
+
   useEffect(() => {
-    generateOutfits(); // Fetch outfits on initial render
+    generateOutfits();
   }, []);
 
-  if (loading) {
-    return <div className="text-center font-semibold">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500 text-center">Error: {error}</div>;
-  }
+  if (loading) return <div className="text-center text-lg font-semibold">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-     
+    <div className="bg-gray-100 min-h-screen py-6">
+      <Navbar />
 
-      <div className="bg-grey-300 rounded-lg shadow-lg p-6 mt-12">
-        {/* Button to select a random outfit */}
-        <div className="flex justify-center mb-6">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-8">
           <button
+            className="bg-gradient-to-r from-blue-500 to-teal-400 text-white py-2 px-4 rounded-lg shadow-md hover:from-teal-400 hover:to-blue-500 transition-colors"
             onClick={selectRandomOutfit}
-            className="bg-teal-600 text-white text-2xl font-bold py-2 px-6 rounded-full shadow hover:bg-teal-800 transition duration-300 transform hover:scale-105"
           >
             Select Random Outfit
           </button>
         </div>
 
-        {/* Display the random outfit if selected */}
         {randoutfit && (
-          <div className="mb-8">
-            <h2 className="text-3xl  font-semibold text-center mb-4">Your Random Outfit</h2>
+          <div className="text-center mb-12">
             <OutfitCard outfit={randoutfit} />
+            <button
+              className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+              onClick={() => handleSelectOutfit(randoutfit)}
+            >
+              Select This Outfit
+            </button>
           </div>
         )}
 
-        {/* Display the list of generated outfits */}
-        <div>
-          <h2 className="text-4xl pt-6 pb-4 font-bold text-center mb-4">Generated Outfits</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {outfits.map((outfit, index) => (
-              <div className="hover:shadow-lg transition-shadow duration-300">
-                <OutfitCard key={index} outfit={outfit} /> {/* Pass each outfit as a prop */}
-              </div>
-            ))}
-          </div>
+        <h2 className="text-2xl font-semibold mb-6 text-center">Generated Outfits</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {outfits.map((outfit, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-lg p-4">
+              <OutfitCard outfit={outfit} />
+              <button
+                className="mt-4 bg-green-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition-colors w-full"
+                onClick={() => handleSelectOutfit(outfit,outfit.top,outfit.bottom,outfit.shoes)}
+              >
+                Select This Outfit
+              </button>
+            </div>
+          ))}
         </div>
+
+        {selectedOutfit && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-semibold text-center mb-6">Selected Outfit</h2>
+            <OutfitCard outfit={selectedOutfit} />
+          </div>
+        )}
       </div>
     </div>
   );

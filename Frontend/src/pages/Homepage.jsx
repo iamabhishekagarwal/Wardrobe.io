@@ -1,5 +1,6 @@
-import { React, useState, useEffect } from 'react';
-
+import {React,useState,useEffect}  from 'react';
+import Navbar from '../components/navbar/Navbar';
+import Footer from '../components/footer/Footer';
 import { HeroParallax } from '../components/ui/Parallax';
 import axiosInstance from '../api/AxiosInstance';
 

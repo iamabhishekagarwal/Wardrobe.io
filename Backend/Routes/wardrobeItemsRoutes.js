@@ -127,4 +127,32 @@ routerW.delete('/deleteItemByID/:id', async (req, res) => {
     }
 });
 
+routerW.post('/wardrobeItems/updateSelected', async (req, res) => {
+  const { top, bottom, shoes } = req.body;  // Expecting top, bottom, shoes as IDs
+  
+  try {
+    // Increment count for top
+    await prisma.wardrobeItem.update({
+      where: { id: top },
+      data: { count: { increment: 1 } },  // Increment the count by 1
+    });
+
+    // Increment count for bottom
+    await prisma.wardrobeItem.update({
+      where: { id: bottom },
+      data: { count: { increment: 1 } },  // Increment the count by 1
+    });
+
+    // Increment count for shoes
+    await prisma.wardrobeItem.update({
+      where: { id: shoes },
+      data: { count: { increment: 1 } },  // Increment the count by 1
+    });
+
+    res.status(200).json({ message: "Wardrobe items updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update wardrobe items" });
+  }
+});
+
 export default routerW;

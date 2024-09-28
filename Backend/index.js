@@ -13,7 +13,7 @@ import userRoutes from './Routes/userRoutes.js';
 import wardrobeItemsRoutes from './Routes/wardrobeItemsRoutes.js';
 import itemTagsRoutes from './Routes/itemTagsRoutes.js';
 import outfitsRoutes from './Routes/outfitsRoutes.js';
-
+import marketPlaceRoutes from './Routes/marketPlaceRoutes.js'
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -31,6 +31,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/wardrobeItems', wardrobeItemsRoutes);
 app.use('/api/itemTags', itemTagsRoutes);
 app.use('/api/outfits', outfitsRoutes);
+app.use('/api/marketPlace',marketPlaceRoutes);
 
 // Start the server
 app.listen(port, () => {
