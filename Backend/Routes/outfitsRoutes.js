@@ -21,9 +21,9 @@ async function suggestOutfit(clothes) {
           // Check if the occasion matches
           if (top.occasion === bottom.occasion && bottom.occasion === shoe.occasion) {
             outfits.push({
-              top: top.name,
-              bottom: bottom.name,
-              shoes: shoe.name,
+              top: top.id,
+              bottom: bottom.id,
+              shoes: shoe.id,
               occasion: top.occasion // Add occasion to the outfit
             });
           }
