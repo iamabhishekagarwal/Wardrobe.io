@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Navbar from "../components/navbar/Navbar";
 
 const items = [
   { id: 1, name: "Denim Jacket", type: "trade", condition: "Good", size: "M", image: "/placeholder.svg" },
@@ -32,7 +33,10 @@ const CommunityExchange = () => {
   };
 
   return (
+    <div>
+        <Navbar></Navbar>
     <div className="container mx-auto p-4">
+        
       {/* Header */}
       <header className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">Community Exchange 🔄</h1>
@@ -154,6 +158,7 @@ const CommunityExchange = () => {
           Join the sustainable fashion movement! 🌱
         </p>
       </footer>
+    </div>
     </div>
   );
 };
