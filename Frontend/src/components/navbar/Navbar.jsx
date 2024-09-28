@@ -13,7 +13,8 @@ const Navbar = () => {
           <li className="hover:text-gray-400"><a href="/">Home</a></li>
           <li className="hover:text-gray-400"><a href="/wardrobe">Wardrobe</a></li>
           <li className="hover:text-gray-400"><a href="/compare">Compare</a></li>
-          <li className="hover:text-gray-400"><a href="/community">community</a></li>
+          <li className="hover:text-gray-400"><a href="/community">Community</a></li>
+          <li className="hover:text-gray-400"><a href="/analytics">Analytics</a></li>
         </ul>
         {isAuthenticated ? <><button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
           Logout
