@@ -1,7 +1,15 @@
 import React from 'react';
+import img1 from '../../assets/img1.webp';
 
 const WardrobeData = [
- 
+    {
+        id: 1,
+        img: img1,
+        title: "Shirt",
+        
+        author: "adi",
+        
+      },
 ];
 
 const Wardrobecard = () => {
