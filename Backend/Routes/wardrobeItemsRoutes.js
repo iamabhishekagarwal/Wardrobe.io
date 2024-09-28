@@ -24,7 +24,7 @@ const upload = multer({
     storage,
     limits: { fileSize: 5000000 }, // 5000KB limit
     fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|gif/;
+        const filetypes = /jpeg|jpg|png|gif|webp/;
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
         const mimetype = filetypes.test(file.mimetype);
 
@@ -37,25 +37,33 @@ const upload = multer({
 });
 
 // Image upload and wardrobe item creation endpoint
-routerW.post('/wardrobeItems', upload.single('image'), async (req, res) => {
-    const { userId, name, category, color, description } = req.body;
+routerW.post('/addItems', upload.single('image'), async (req, res) => {
+    const { userId, name, category, color, description, occasion,type } = req.body;
 
     // Check if image is uploaded
     if (!req.file) {
         return res.status(400).json({ msg: "Image is required" });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`; // Construct image URL
+    const imageUrl = `/uploads/${req.file.filename}`; // Construct image URL from the uploaded file
 
     try {
+        // Ensure userId is an integer
+        const parsedUserId = parseInt(userId, 10);
+        if (isNaN(parsedUserId)) {
+            return res.status(400).json({ msg: "Invalid userId" });
+        }
+
         const wardrobeItem = await prismaW.wardrobeItem.create({
             data: {
-                userId: parseInt(userId), // Ensure userId is an integer
+                userId: parsedUserId,
                 name,
                 category,
-                color,
+                color: color || null, // Make sure optional fields are handled
                 imageUrl,
-                description,
+                occasion: occasion || 'casual', // Set default value if not provided
+                description: description || null, // Ensure description can be nullable
+                type: type || 'casual',
             }
         });
         res.status(201).json(wardrobeItem);
@@ -64,14 +72,16 @@ routerW.post('/wardrobeItems', upload.single('image'), async (req, res) => {
     }
 });
 
+
 // Fetch all wardrobe items
-routerW.get('/wardrobeItems', async (req, res) => {
-    const wardrobeItems = await prismaW.wardrobeItem.findMany();
+routerW.get('/getAllItems', async (req, res) => {
+    const {userId}=req.body;
+    const wardrobeItems = await prismaW.wardrobeItem.findMany({where:{userId:userId}});
     res.json(wardrobeItems);
 });
 
 // Fetch a specific wardrobe item by id
-routerW.get('/wardrobeItems/:id', async (req, res) => {
+routerW.get('/getItemByID/:id', async (req, res) => {
     const wardrobeItem = await prismaW.wardrobeItem.findUnique({ where: { id: Number(req.params.id) } });
     if (wardrobeItem) {
         res.json(wardrobeItem);
@@ -81,7 +91,7 @@ routerW.get('/wardrobeItems/:id', async (req, res) => {
 });
 
 // Update a wardrobe item
-routerW.put('/wardrobeItems/:id', upload.single('image'), async (req, res) => {
+routerW.put('/updateItemByID/:id', upload.single('image'), async (req, res) => {
     const { name, category, color, description } = req.body;
     let imageUrl = req.body.imageUrl;
 
@@ -102,10 +112,19 @@ routerW.put('/wardrobeItems/:id', upload.single('image'), async (req, res) => {
 });
 
 // Delete a wardrobe item
-routerW.delete('/wardrobeItems/:id', async (req, res) => {
+routerW.delete('/deleteItemByID/:id', async (req, res) => {
     try {
-        await prismaW.wardrobeItem.delete({ where: { id: Number(req.params.id) } });
-        res.sendStatus(204);
+        const userId = Number(req.params.id);
+
+        // Ensure itemId is a valid number
+        if (isNaN(userId)) {
+            return res.status(400).json({ msg: "Invalid item ID" });
+        }
+
+        await prismaW.wardrobeItem.deleteMany({ 
+            where: { userId: userId }  // Deleting by the primary key 'id', not userId
+        });
+        res.sendStatus(204); // Successful deletion, no content
     } catch (error) {
         res.status(500).json({ msg: "Error deleting wardrobe item", error: error.message });
     }

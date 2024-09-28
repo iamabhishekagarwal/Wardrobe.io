@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  name           String?
-  wardrobeItems  WardrobeItem[]
-  outfits        Outfit[]
-  itemUsages     ItemUsage[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  name          String?
+  wardrobeItems WardrobeItem[]
+  outfits       Outfit[]
+  itemUsages    ItemUsage[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model WardrobeItem {
@@ -24,6 +24,8 @@ model WardrobeItem {
   userId      Int
   name        String
   category    String
+  occasion    String       @default("casual")
+  type        String       @default("none")
   color       String?
   imageUrl    String?
   description String?
