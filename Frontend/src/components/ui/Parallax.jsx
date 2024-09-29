@@ -2,8 +2,8 @@ import React from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 export const HeroParallax = ({
-    products,
-  title = "Explore Our Collection",
+  products,
+  title = "Explore Your Wardrobe",
 }) => {
   const ref = React.useRef(null);
   const { scrollYProgress } = useScroll({
@@ -15,22 +15,23 @@ export const HeroParallax = ({
 
   const translateX = useSpring(useTransform(scrollYProgress, [0, 1], [0, 1000]), springConfig);
   const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, 1000]), // Adjusted here
+    useTransform(scrollYProgress, [0, 1], [0, 1000]),
     springConfig
   );
   const rotateX = useSpring(useTransform(scrollYProgress, [0, 0.2], [15, 0]), springConfig);
   const opacity = useSpring(useTransform(scrollYProgress, [0, 0.2], [0.2, 1]), springConfig);
   const rotateZ = useSpring(useTransform(scrollYProgress, [0, 0.2], [20, 0]), springConfig);
-  const translateY = useSpring(useTransform(scrollYProgress, [0, 0.2], [-700, 500]), springConfig);
+  const translateY = useSpring(useTransform(scrollYProgress, [0, 0.2], [-700, 400]), springConfig); // Adjusted translateY
 
   // Parallax effect for the dynamic title
-  const titleTranslateY = useSpring(useTransform(scrollYProgress, [0, 0.2], [-100, 0]), springConfig);
+  const titleTranslateY = useSpring(useTransform(scrollYProgress, [0, 0.2], [-40, 0]), springConfig); // Reduced translation
   const titleOpacity = useSpring(useTransform(scrollYProgress, [0, 0.2], [0, 1]), springConfig);
 
-  // Split products into two equal rows
-  const half = Math.ceil(products.length / 2);
-  const firstRow = products.slice(0, half);
-  const secondRow = products.slice(half);
+  // Define number of columns per row
+  const columnsPerRow = 5; // Adjust this to change the number of cards in each row
+  const rows = Array.from({ length: Math.ceil(products.length / columnsPerRow) }, (_, i) => 
+    products.slice(i * columnsPerRow, (i + 1) * columnsPerRow)
+  );
 
   return (
     <div
@@ -45,7 +46,7 @@ export const HeroParallax = ({
           translateY: titleTranslateY,
           opacity: titleOpacity,
         }}
-        className="text-6xl font-bold text-center text-gray-900 mb-20"
+        className="text-6xl font-bold text-center text-gray-900 mb-2" // Further reduced margin bottom
       >
         {title}
       </motion.h1>
@@ -58,27 +59,17 @@ export const HeroParallax = ({
           opacity,
         }}
       >
-        {/* First Row */}
-        <motion.div className="flex space-x-10 mb-20">
-          {firstRow.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              translate={translateX}
-            />
-          ))}
-        </motion.div>
-
-        {/* Second Row */}
-        <motion.div className="flex space-x-10 mb-20" style={{ translateX: translateXReverse }}>
-          {secondRow.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              translate={translateX}
-            />
-          ))}
-        </motion.div>
+        {rows.map((row, rowIndex) => (
+          <motion.div key={rowIndex} className="flex space-x-10 mb-10"> {/* Adjusted margin bottom for each row */}
+            {row.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                translate={translateX}
+              />
+            ))}
+          </motion.div>
+        ))}
       </motion.div>
     </div>
   );
