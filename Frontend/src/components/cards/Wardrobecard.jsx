@@ -10,7 +10,7 @@ const WardrobeData = [
   },
 ];
 
-const Wardrobecard = () => {
+const Wardrobecard = ({}) => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [wardrobeData, setWardrobeData] = useState(WardrobeData);
   const [modalImage, setModalImage] = useState(null); // For enlarged image preview

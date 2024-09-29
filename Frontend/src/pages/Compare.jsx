@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar/Navbar';
 import axiosInstance from '../api/AxiosInstance';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function Compare() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [databaseImages, setDatabaseImages] = useState([]);
   const [imageUrl , setImageUrl] = useState(undefined);
+  const {isAuthenticated,user} = useAuth0();
+  const [userID,setUserID] = useState(undefined);
   // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0]; // Get the first selected file
@@ -24,6 +27,54 @@ function Compare() {
     }
   };
   
+  async function checkUser() {
+    try {
+      const response = await axiosInstance.post(
+        "/user/signin",
+        {
+          email: user.email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const msg = response.data.msg;
+      if (msg=="User verified successfully") {
+        console.log(response.data.id)
+        setUserID(response.data.id); 
+      }
+      else{
+        try{
+          const response2 = await axiosInstance.post('/user/signup',
+            {
+              email: user.email,
+              name: user.given_name ,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response.data.id)
+        }
+        catch(e){
+          console.log("error sending req to signup")
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error fetching user id : ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkUser();
+    }  
+  })
   // Function to send the image as FormData to the backend
   const fetchLabel = async (file) => {
     const formData = new FormData();
@@ -50,14 +101,16 @@ function Compare() {
   const Compare = async(data) =>{
     try{
     const compareData = {
-        "userId" : 1,
+        "userId" : userID,
         "visionResponse" : data
       }
+      console.log(compareData)
       const response2 = await axiosInstance.post("/user/compare-images",compareData,{
         headers:{
             "Content-Type" : 'application/json'
         }
       })
+      console.log(response2.data[0].imageUrl)
       if(response2.data[0].imageUrl !== undefined){
         setImageUrl(response2.data[0].imageUrl)
       }
@@ -85,8 +138,9 @@ function Compare() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar></Navbar>
+  <>
+      <Navbar />
+      {isAuthenticated?<><div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl text-black text-center font-bold mb-2">Compare Image</h1>
 
@@ -153,7 +207,11 @@ function Compare() {
           )}
         </div>
       </div>
-    </div>
+    </div></>:<div className="flex items-center justify-center h-screen">
+  <p className="text-center">Login to access this page</p>
+</div>}
+    
+    </>
   );
 }
 
