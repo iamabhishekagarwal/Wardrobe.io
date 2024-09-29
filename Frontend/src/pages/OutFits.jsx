@@ -10,7 +10,7 @@ function OutFits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOutfit, setSelectedOutfit] = useState(null);
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated ,user} = useAuth0();
 
   // State for form fields
   const [name, setName] = useState("");
