@@ -1,42 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/AxiosInstance';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const ListItemCard = ({ itemId }) => {
-     // Add userId prop
-    const [item, setItem] = useState(null); // Start with null to avoid rendering issues
-    const [loading, setLoading] = useState(true); // Loading state
+    const [item, setItem] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const { isAuthenticated, user } = useAuth0();
+    const [userId, setUserId] = useState(undefined);
 
     useEffect(() => {
-        const response = axiosInstance.post(`user/signin`);
+        // Fetch item details
         const fetchItem = async () => {
             try {
                 const response = await axiosInstance.get(`wardrobeItems/getItemByID/${itemId}`);
-                setItem(response.data); // Set item data
+                setItem(response.data);
             } catch (error) {
                 console.error("Error fetching item:", error);
             } finally {
-                setLoading(false); // Stop loading
+                setLoading(false);
+            }
+        };
+
+        // Check user authentication and fetch user ID
+        const checkUser = async () => {
+            if (isAuthenticated) {
+                try {
+                    const response = await axiosInstance.post(
+                        "/user/signin",
+                        { email: user.email },
+                        { headers: { "Content-Type": "application/json" } }
+                    );
+
+                    if (response.data.msg === "User verified successfully") {
+                        setUserId(response.data.id);
+                    } else {
+                        // If user not verified, sign them up
+                        const signupResponse = await axiosInstance.post(
+                            '/user/signup',
+                            {
+                                email: user.email,
+                                name: user.given_name,
+                            },
+                            { headers: { "Content-Type": "application/json" } }
+                        );
+                        setUserId(signupResponse.data.id); // Use signup response ID
+                    }
+                } catch (error) {
+                    console.error("Error fetching user ID: ", error);
+                }
             }
         };
 
         fetchItem();
-    }, [itemId]); // Fetch item when itemId changes
+        checkUser(); // Call checkUser here
+
+    }, [itemId, isAuthenticated, user]); // Add dependencies
 
     if (loading) {
-        return <div>Loading...</div>; // Optionally show a loading indicator
+        return <div>Loading...</div>;
     }
 
     if (!item) {
-        return <div>No item found.</div>; // Handle case where item doesn't exist
+        return <div>No item found.</div>;
     }
 
     // Button click handlers
     const handleSell = async () => {
         const price = prompt("Enter the selling price:"); // Prompt for price
-        // Validate price input
         if (price && !isNaN(price)) {
             try {
-                const response = await axiosInstance.post("marketplace/sell", {  // Ensure correct endpoint
+                const response = await axiosInstance.post("marketplace/sell", {
                     userId,
                     wardrobeItemId: itemId,
                     price: parseFloat(price), // Convert price to a number
@@ -45,19 +78,17 @@ const ListItemCard = ({ itemId }) => {
                 alert('Item listed for sale successfully!');
             } catch (error) {
                 console.error("Error selling item:", error);
-                // Show a more specific error message if available
                 alert(error.response?.data?.error || 'Failed to list item for sale.');
             }
         } else {
-            alert("Please enter a valid price."); // Alert for invalid input
+            alert("Please enter a valid price.");
         }
     };
-    
 
     const handleDonate = async () => {
         try {
-            const response = await axiosInstance.post("marketPlace/donate", {
-                userId,
+            const response = await axiosInstance.post("marketplace/donate", {
+                userId, // Make sure to use userId
                 wardrobeItemId: itemId,
             });
             console.log(`Item donated: ${response.data}`);
@@ -70,12 +101,12 @@ const ListItemCard = ({ itemId }) => {
 
     const handleRent = async () => {
         const rentalPrice = prompt("Enter the rental price:"); // Prompt for rental price
-        if (rentalPrice) {
+        if (rentalPrice && !isNaN(rentalPrice)) {
             try {
-                const response = await axiosInstance.post("marketPlace/rent", {
+                const response = await axiosInstance.post("marketplace/rent", {
                     userId,
                     wardrobeItemId: itemId,
-                    rentalPrice,
+                    rentalPrice: parseFloat(rentalPrice), // Ensure the price is a number
                 });
                 console.log(`Item rented: ${response.data}`);
                 alert('Item listed for rent successfully!');
@@ -83,6 +114,8 @@ const ListItemCard = ({ itemId }) => {
                 console.error("Error renting item:", error);
                 alert('Failed to list item for rent.');
             }
+        } else {
+            alert("Please enter a valid rental price.");
         }
     };
 
