@@ -127,4 +127,106 @@ routerW.delete('/deleteItemByID/:id', async (req, res) => {
     }
 });
 
+routerW.post('/updateSelected', async (req, res) => {
+    const { top, bottom, shoes } = req.body;  // Expecting top, bottom, shoes as IDs
+  
+    try {
+      // Increment count for top by ID
+      await prismaW.wardrobeItem.update({
+        where: { id: top },  // Use the ID of the top item
+        data: { count: { increment: 1 } },  // Increment the count by 1
+      });
+  
+      // Increment count for bottom by ID
+      await prismaW.wardrobeItem.update({
+        where: { id: bottom },  // Use the ID of the bottom item
+        data: { count: { increment: 1 } },  // Increment the count by 1
+      });
+  
+      // Increment count for shoes by ID
+      await prismaW.wardrobeItem.update({
+        where: { id: shoes },  // Use the ID of the shoes item
+        data: { count: { increment: 1 } },  // Increment the count by 1
+      });
+  
+      res.status(200).json({ message: "Wardrobe items updated successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update wardrobe items", details: error.message });
+    }
+  });
+
+  routerW.get('/maxCounts', async (req, res) => {
+    try {
+      // Get the wardrobe item with the maximum count for 'top'
+      const maxTop = await prismaW.wardrobeItem.findFirst({
+        where: { category: 'top' },
+        orderBy: { count: 'desc' },  // Order by count in descending order
+        take: 1,  // Take the top result
+      });
+  
+      // Get the wardrobe item with the maximum count for 'bottom'
+      const maxBottom = await prismaW.wardrobeItem.findFirst({
+        where: { category: 'bottom' },
+        orderBy: { count: 'desc' },
+        take: 1,
+      });
+  
+      // Get the wardrobe item with the maximum count for 'shoes'
+      const maxShoes = await prismaW.wardrobeItem.findFirst({
+        where: { category: { equals: 'shoe', mode: 'insensitive' } },
+        orderBy: { count: 'desc' },
+        take: 1,
+      });
+      
+  
+      // Return the items with the maximum count for each type
+      res.status(200).json({
+        maxTop: maxTop || null,     // Return null if no top found
+        maxBottom: maxBottom || null, // Return null if no bottom found
+        maxShoes: maxShoes || null,   // Return null if no shoes found
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch maximum counts", details: error.message });
+    }
+  });
+
+  routerW.get('/minCounts', async (req, res) => {
+    try {
+      // Get the wardrobe item with the minimum count for 'top'
+      const minTop = await prismaW.wardrobeItem.findFirst({
+        where: { category: 'top' },
+        orderBy: { count: 'asc' },  // Order by count in ascending order
+        take: 1,  // Take the top result
+      });
+  
+      // Get the wardrobe item with the minimum count for 'bottom'
+      const minBottom = await prismaW.wardrobeItem.findFirst({
+        where: { category: 'bottom' },
+        orderBy: { count: 'asc' },
+        take: 1,
+      });
+  
+      // Get the wardrobe item with the minimum count for 'shoes'
+      const minShoes = await prismaW.wardrobeItem.findFirst({
+        where: { category: { equals: 'shoe', mode: 'insensitive' } },
+        orderBy: { count: 'asc' },
+        take: 1,
+      });
+      
+      // Return the items with the minimum count for each type
+      res.status(200).json({
+        minTop: minTop || null,       // Return null if no top found
+        minBottom: minBottom || null, // Return null if no bottom found
+        minShoes: minShoes || null,   // Return null if no shoes found
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch minimum counts", details: error.message });
+    }
+  });
+      
+  
+  
+  
+  
+
 export default routerW;
