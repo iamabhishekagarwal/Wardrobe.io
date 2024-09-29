@@ -89,7 +89,6 @@ const Homepage = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };
