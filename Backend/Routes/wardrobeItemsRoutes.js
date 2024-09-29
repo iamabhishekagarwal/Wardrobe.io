@@ -161,11 +161,7 @@ routerW.post('/updateSelected', async (req, res) => {
 
   routerW.post('/maxCounts', async (req, res) => {
     const { userId } = req.body;  // Extract userId from the request body
-  
-    if (!userId) {
-      return res.status(400).json({ error: 'UserId is required' });
-    }
-  
+    
     try {
       // Get the wardrobe item with the maximum count for 'top' for the specified user
       const maxTop = await prismaW.wardrobeItem.findFirst({
@@ -202,6 +198,7 @@ routerW.post('/updateSelected', async (req, res) => {
 
   routerW.post('/minCounts', async (req, res) => {
     try {
+        const {userId} = req.body
       // Get the wardrobe item with the minimum count for 'top'
       const minTop = await prismaW.wardrobeItem.findFirst({
         where: { category: 'top' , userId: parseInt(userId)},
