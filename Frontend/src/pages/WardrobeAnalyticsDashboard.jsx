@@ -66,7 +66,7 @@ const WardrobeAnalyticsDashboard = () => {
     if (isAuthenticated) {
       checkUser();
     }  
-  })
+  },[isAuthenticated])
 
   useEffect(() => {
     // Fetch max count items data
