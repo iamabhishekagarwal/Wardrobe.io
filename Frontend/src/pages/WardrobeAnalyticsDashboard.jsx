@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from '../api/AxiosInstance';
+import Navbar from "../components/navbar/Navbar";
 
 const WardrobeAnalyticsDashboard = () => {
 
@@ -29,7 +30,8 @@ const WardrobeAnalyticsDashboard = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className=" bg-gray-50 min-h-screen">
+      <Navbar></Navbar>
      
       {/* Overall Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
