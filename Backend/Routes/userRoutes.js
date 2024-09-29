@@ -306,7 +306,7 @@ routerU.post('/compare-images', async(req, res) => {
         if (labelLower.includes('shirt')) {
             console.log('Detected Shirt Label:', labelLower);  // Debugging log
             return 'shirt'; // Map any label containing 'shirt' to 'shirt'
-        } else if (['t-shirt', 'trousers', 'jeans', 'shorts', 'sneakers', 'hiking shoe', 'walking shoe', 'sportswear', 'denim'].includes(labelLower)) {
+        } else if (['t-shirt', 'jeans', 'shorts', 'sneakers', 'hiking shoe', 'walking shoe', 'sportswear', 'denim'].includes(labelLower)) {
             return labelLower; // If the label exactly matches one of these, return it
         }
         return null;

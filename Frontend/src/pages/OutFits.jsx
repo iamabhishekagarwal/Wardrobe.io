@@ -20,13 +20,64 @@ function OutFits() {
   const [description, setDescription] = useState("");
   const [occasion, setOccasion] = useState("");
   const [image, setImage] = useState(null);
+  const [userID,setUserID] = useState(undefined);
 
   // Fetch outfits
+
+  async function checkUser() {
+    try {
+      const response = await axiosInstance.post(
+        "/user/signin",
+        {
+          email: user.email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const msg = response.data.msg;
+      if (msg=="User verified successfully") {
+        console.log(response.data.id)
+        setUserID(response.data.id); 
+      }
+      else{
+        try{
+          const response2 = await axiosInstance.post('/user/signup',
+            {
+              email: user.email,
+              name: user.given_name ,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response.data.id)
+        }
+        catch(e){
+          console.log("error sending req to signup")
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error fetching user id : ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkUser();
+    }  
+  })
+
   const generateOutfits = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.post("/outfits/generateOutfits", {
-        userId: 1,
+        userId: userID,
       });
       setOutfits(response.data.outfits);
       console.log(response.data.outfits);
@@ -42,7 +93,7 @@ function OutFits() {
     try {
       setLoading(true);
       const response = await axiosInstance.post("/outfits/randomOutfits", {
-        userId: 1,
+        userId: userID,
       });
       setRandoutfit(response.data.outfit);
     } catch (error) {

@@ -101,14 +101,16 @@ function Compare() {
   const Compare = async(data) =>{
     try{
     const compareData = {
-        "userId" : 1,
+        "userId" : userID,
         "visionResponse" : data
       }
+      console.log(compareData)
       const response2 = await axiosInstance.post("/user/compare-images",compareData,{
         headers:{
             "Content-Type" : 'application/json'
         }
       })
+      console.log(response2.data[0].imageUrl)
       if(response2.data[0].imageUrl !== undefined){
         setImageUrl(response2.data[0].imageUrl)
       }
