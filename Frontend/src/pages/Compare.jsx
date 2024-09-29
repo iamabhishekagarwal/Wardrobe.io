@@ -7,7 +7,8 @@ function Compare() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [databaseImages, setDatabaseImages] = useState([]);
   const [imageUrl , setImageUrl] = useState(undefined);
-  const {isAuthenticated} = useAuth0();
+  const {isAuthenticated,user} = useAuth0();
+  const [userID,setUserID] = useState(undefined);
   // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0]; // Get the first selected file
@@ -26,6 +27,54 @@ function Compare() {
     }
   };
   
+  async function checkUser() {
+    try {
+      const response = await axiosInstance.post(
+        "/user/signin",
+        {
+          email: user.email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const msg = response.data.msg;
+      if (msg=="User verified successfully") {
+        console.log(response.data.id)
+        setUserID(response.data.id); 
+      }
+      else{
+        try{
+          const response2 = await axiosInstance.post('/user/signup',
+            {
+              email: user.email,
+              name: user.given_name ,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response.data.id)
+        }
+        catch(e){
+          console.log("error sending req to signup")
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error fetching user id : ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkUser();
+    }  
+  })
   // Function to send the image as FormData to the backend
   const fetchLabel = async (file) => {
     const formData = new FormData();
