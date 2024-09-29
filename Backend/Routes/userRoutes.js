@@ -7,6 +7,7 @@ import multer from 'multer';
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import e from "express";
 
 
 dotenv.config();
@@ -94,7 +95,7 @@ const client = new ImageAnnotatorClient({
 const prisma = new PrismaClient();
 const userSchema = z.object({
     email: z.string().email(),
-    username: z.string(),
+    name: z.string(),
   });
   routerU.post('/item/upload', upload.single('image'), async (req, res) => {
     try {
@@ -135,17 +136,21 @@ async function insertUser(data) {
 }
 
 // Function to verify a user by email in the database
-async function verifyUser(email) {
+async function verifyUser(
+    email
+  ) {
     try {
-        const res = await prismaU.user.findUnique({
-            where: { email },
-        });
-        return res;
+      const res = await prismaU.user.findFirst({
+        where: {
+          email,
+        },
+      });
+      return res;
     } catch (error) {
-        console.error("Error verifying user:", error);
-        throw error;
+      console.error("Error verifying user:", error);
+      throw error;
     }
-}
+  }
 
 // Signup endpoint
 routerU.post("/signup", async (req, res) => {
@@ -159,14 +164,36 @@ routerU.post("/signup", async (req, res) => {
     }
 });
 
+// routerU.post("/signin", async (req, res) => {
+//     const { name, email } = req.body;
+//     const inputValidation = userSchema.safeParse({
+//       name,
+//       email,
+//     });
+//     if (!inputValidation.success) {
+//       return res.status(400).json({ msg: "Inputs are not valid" });
+//     }
+//     try {
+//       const user = await verifyUser(name, email);
+//       if (user) {
+//         return res.status(200).json({ msg: "User verified successfully" ,id:user.id});
+//       } else {
+//         return res.status(200).json({ msg: "User not found" });
+//       }
+//     } catch (error) {
+//       res.status(500).json({ msg: "Error verifying user" ,error});
+//     }
+//   });
+  
+
 // Signin endpoint
 routerU.post("/signin", async (req, res) => {
     const { email } = req.body;
 
-    const inputValidation = userSchema.safeParse({ email });
-    if (!inputValidation.success) {
-        return res.status(400).json({ msg: "Inputs are not valid" });
-    }
+    // const inputValidation = userSchema.safeParse({ email });
+    // if (!inputValidation.success) {
+    //     return res.status(400).json({ msg: "Inputs are not valid" });
+    // }
 
     try {
         const user = await verifyUser(email);
@@ -279,7 +306,7 @@ routerU.post('/compare-images', async(req, res) => {
         if (labelLower.includes('shirt')) {
             console.log('Detected Shirt Label:', labelLower);  // Debugging log
             return 'shirt'; // Map any label containing 'shirt' to 'shirt'
-        } else if (['t-shirt', 'trousers', 'jeans', 'shorts', 'sneakers', 'hiking shoe', 'walking shoe', 'sportswear', 'denim'].includes(labelLower)) {
+        } else if (['t-shirt', 'jeans', 'shorts', 'sneakers', 'hiking shoe', 'walking shoe', 'sportswear', 'denim'].includes(labelLower)) {
             return labelLower; // If the label exactly matches one of these, return it
         }
         return null;

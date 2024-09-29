@@ -30,6 +30,7 @@ model WardrobeItem {
   color           String?
   imageUrl        String?
   description     String?
+  count           Int               @default(0)
   tags            ItemTag[]
   lastWorn        DateTime?
   outfitItems     OutfitItem[]
