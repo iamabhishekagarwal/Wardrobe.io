@@ -106,9 +106,7 @@ function OutFits() {
   // Handle outfit selection
   const handleSelectOutfit = async (outfit, top, bottom, shoes) => {
     setSelectedOutfit(outfit);
-    console.log(top);
-    console.log(bottom);
-    console.log(shoes);
+
     try {
       const response = await axiosInstance.post("/wardrobeItems/updateSelected", {
         top,

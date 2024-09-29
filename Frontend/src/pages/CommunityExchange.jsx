@@ -1,62 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/navbar/Navbar";
 import axiosInstance from "../api/AxiosInstance";
+import ItemCard from "../components/cards/ItemCard";
+import ListItemCard from "../components/cards/ListItemCard";
 
 const CommunityExchange = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const [type, setType] = useState("all");
   const [listedItems, setListedItems] = useState([]);
-  const [chooseData, setChooseData] = useState([]);
+  const [wardrobe, setWardrobe] = useState([]);
 
-  // Fetch all wardrobe items when 'Choose' is clicked
-  const handleChoose = async () => {
-    try {
-      const response = await axiosInstance.get("/wardrobeItems/getAllItems");
-      console.log(response.data);
-      setChooseData(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  // Fetch items initially (for listed items)
+  // Fetch items when the component mounts
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchWardrobeItems = async () => {
       try {
-        const response = await axiosInstance.get("/wardrobeItems/getAllItems"); // Adjust API path as per your setup
-        setListedItems(response.data);
-      } catch (e) {
-        console.log(e);
+        const response = await axiosInstance.get("/wardrobeItems/getAllItems");
+        setWardrobe(response.data); // Correctly set wardrobe items
+      } catch (error) {
+        console.error("Error fetching wardrobe items:", error);
       }
     };
-    fetchItems();
-  }, []);
 
-  const filteredItems = listedItems.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (filter === "all" || item.type === filter)
-  );
-
-  const handleListItem = async (e) => {
-    e.preventDefault();
-    const newItem = {
-      id: listedItems.length + 1,
-      name: e.target.name.value,
-      type: e.target.type.value,
-      condition: e.target.condition.value,
-      size: e.target.size.value,
-      image: e.target.image.value || "/placeholder.svg",
+    const fetchListedItems = async () => {
+      try {
+        const response = await axiosInstance.get("marketplace/items/status/ACTIVE");
+        setListedItems(response.data); // Set items to those with status ACTIVE
+      } catch (error) {
+        console.error("Error fetching listed items:", error);
+      }
     };
 
+    fetchWardrobeItems();
+    fetchListedItems();
+  }, []); // Empty dependency array to run only once on mount
+
+  const handleSetType = async (data) => {
+    setType(data);
     try {
-      // Optionally, you can send this newItem to the backend using a POST request:
-      await axiosInstance.post("/wardrobeItems/addItem", newItem); // Adjust the API endpoint
-      setListedItems([...listedItems, newItem]); // Update local state
-    } catch (e) {
-      console.log("Error adding item:", e);
+      let response;
+      if (data === "all") {
+        response = await axiosInstance.get("marketplace/items/status/ACTIVE");
+      } else {
+        response = await axiosInstance.get(`marketplace/items/type/${data}`);
+      }
+      const activeItems = response.data.filter(item => item.status === "ACTIVE");
+      setListedItems(activeItems); // Update listed items based on selected type
+    } catch (error) {
+      console.error("Error fetching filtered items:", error);
     }
   };
+
+  // Further filter items based on search term
+  const filteredItems = listedItems.filter(item =>
+    item.wardrobeItemId && item.wardrobeItemId.toString().toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -73,11 +71,13 @@ const CommunityExchange = () => {
         {/* Tabs */}
         <div className="mb-8">
           <div className="flex justify-center space-x-8 mb-4">
-            <button onClick={() => setFilter("list")} className="text-lg font-bold">Browse Items</button>
-            <button onClick={() => setFilter("all")} className="text-lg font-bold">List an item</button>
+            <button onClick={() => setFilter("all")} className="text-lg font-bold">
+              Browse Items
+            </button>
+            <button onClick={() => setFilter("list")} className="text-lg font-bold">
+              List an Item
+            </button>
           </div>
-
-          
 
           {filter !== "list" ? (
             <div>
@@ -91,139 +91,45 @@ const CommunityExchange = () => {
                   className="p-2 border border-gray-300 rounded"
                 />
                 <select
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
+                  value={type}
+                  onChange={(e) => handleSetType(e.target.value)}
                   className="p-2 border border-gray-300 rounded"
                 >
                   <option value="all">All Items</option>
-                  <option value="trade">Trade</option>
-                  <option value="donate">Donate</option>
-                  <option value="lend">Lend</option>
+                  <option value="SELL">Buy</option>
+                  <option value="RENT">Rent</option>
+                  <option value="DONATE">Donation</option>
                 </select>
               </div>
-
-              {/* Display Filtered Items */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredItems.map((item) => (
-                  <div key={item.id} className="border p-4 rounded shadow-lg">
-                    <h3 className="text-xl font-bold">{item.name}</h3>
-                    <p>Size: {item.size} | Condition: {item.condition}</p>
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-40 object-cover mb-4 rounded-md"
-                    />
-                    <span
-                      className={`inline-block py-1 px-2 rounded text-white ${
-                        item.type === "trade"
-                          ? "bg-green-500"
-                          : item.type === "donate"
-                          ? "bg-blue-500"
-                          : "bg-yellow-500"
-                      }`}
-                    >
-                      {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                    </span>
-                  </div>
-                ))}
+              <div>
+                {/* Display filtered items */}
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item, index) => (
+                    <ItemCard key={index} itemId={item.wardrobeItemId} />
+                  ))
+                ) : (
+                  <p>No items found.</p>
+                )}
               </div>
-
-              {/* Choose from API Fetched Items */}
-              {chooseData.length > 0 && (
-                <div className="mt-8">
-                  <h2 className="text-xl font-bold mb-4">Choose an Item:</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {chooseData.map((item) => (
-                      <div key={item.id} className="border p-4 rounded shadow-lg">
-                        <h3 className="text-xl font-bold">{item.name}</h3>
-                        <p>Size: {item.size} | Condition: {item.condition}</p>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-40 object-cover mb-4 rounded-md"
-                        />
-                        <span
-                          className={`inline-block py-1 px-2 rounded text-white ${
-                            item.type === "trade"
-                              ? "bg-green-500"
-                              : item.type === "donate"
-                              ? "bg-blue-500"
-                              : "bg-yellow-500"
-                          }`}
-                        >
-                          {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             <div>
-              {/* List an Item */}
-              <form onSubmit={handleListItem} className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block mb-2">Item Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="e.g., Blue Denim Jacket"
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="type" className="block mb-2">Exchange Type</label>
-                  <select
-                    id="type"
-                    name="type"
-                    className="w-full p-2 border border-gray-300 rounded"
-                  >
-                    <option value="trade">Trade</option>
-                    <option value="donate">Donate</option>
-                    <option value="lend">Lend</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="condition" className="block mb-2">Condition</label>
-                  <input
-                    type="text"
-                    id="condition"
-                    name="condition"
-                    placeholder="e.g., Good, Like New"
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="size" className="block mb-2">Size</label>
-                  <input
-                    type="text"
-                    id="size"
-                    name="size"
-                    placeholder="e.g., M, 38, 10"
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="image" className="block mb-2">Image URL</label>
-                  <input
-                    type="url"
-                    id="image"
-                    name="image"
-                    placeholder="http://example.com/image.jpg"
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded">List Item</button>
-              </form>
+              {wardrobe.length > 0 ? (
+                wardrobe.map((item, index) => (
+                  <ListItemCard key={index} itemId={item.id} />
+                ))
+              ) : (
+                <p>No items found.</p>
+              )}
             </div>
           )}
         </div>
 
         {/* Footer */}
         <footer className="text-center mt-8">
-          <p className="text-muted-foreground">Join the sustainable fashion movement! 🌱</p>
+          <p className="text-muted-foreground">
+            Join the sustainable fashion movement! 🌱
+          </p>
         </footer>
       </div>
     </div>
