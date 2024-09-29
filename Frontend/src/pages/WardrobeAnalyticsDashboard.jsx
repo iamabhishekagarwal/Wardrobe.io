@@ -4,12 +4,14 @@ import Navbar from "../components/navbar/Navbar";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const WardrobeAnalyticsDashboard = () => {
-  const {isAuthenticated} = useAuth0();
+  const {isAuthenticated,user} = useAuth0();
   const [maxItems, setMaxItems] = useState({
     maxTop: null,
     maxBottom: null,
     maxShoes: null,
   });
+  const [userID,setUserID] = useState(undefined);
+
   const [minItems, setMinItems] = useState({
     minTop: null,
     minBottom: null,
@@ -17,13 +19,60 @@ const WardrobeAnalyticsDashboard = () => {
   });
   const [allItems, setAllItems] = useState([]); // State to hold all wardrobe items
 
-  const userId = 1; // Replace this with the actual userId you want to use
+  async function checkUser() {
+    try {
+      const response = await axiosInstance.post(
+        "/user/signin",
+        {
+          email: user.email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const msg = response.data.msg;
+      if (msg=="User verified successfully") {
+        console.log(response.data.id)
+        setUserID(response.data.id); 
+      }
+      else{
+        try{
+          const response2 = await axiosInstance.post('/user/signup',
+            {
+              email: user.email,
+              name: user.given_name ,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response.data.id)
+        }
+        catch(e){
+          console.log("error sending req to signup")
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error fetching user id : ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkUser();
+    }  
+  },[isAuthenticated])
 
   useEffect(() => {
     // Fetch max count items data
     const fetchMaxCountItems = async () => {
       try {
-        const response = await axiosInstance.get("/wardrobeItems/maxCounts"); // Adjust this URL if needed
+        const response = await axiosInstance.post("/wardrobeItems/maxCounts",{userId:userID}); // Adjust this URL if needed
         setMaxItems(response.data);
       } catch (error) {
         console.error("Error fetching max count items:", error);
@@ -33,7 +82,7 @@ const WardrobeAnalyticsDashboard = () => {
     // Fetch min count items data
     const fetchMinCountItems = async () => {
       try {
-        const response = await axiosInstance.get("/wardrobeItems/minCounts"); // Adjust this URL if needed
+        const response = await axiosInstance.post("/wardrobeItems/minCounts",{userId:userID}); // Adjust this URL if needed
         setMinItems(response.data);
       } catch (error) {
         console.error("Error fetching min count items:", error);
@@ -43,7 +92,7 @@ const WardrobeAnalyticsDashboard = () => {
     // Fetch all wardrobe items
     const fetchAllItems = async () => {
       try {
-        const response = await axiosInstance.get("/wardrobeItems//getAllItems", { userId });
+        const response = await axiosInstance.post("/wardrobeItems/getItems", { userId:userID });
         setAllItems(response.data);
         console.log(response.data)
       } catch (error) {
@@ -54,7 +103,7 @@ const WardrobeAnalyticsDashboard = () => {
     fetchMaxCountItems();
     fetchMinCountItems();
     fetchAllItems();
-  }, [userId]);
+  }, [userID]);
 
   // Group wardrobe items by category
   const groupedItems = allItems.reduce((acc, item) => {
