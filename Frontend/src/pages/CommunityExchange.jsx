@@ -110,8 +110,9 @@ const CommunityExchange = () => {
   );
 
   return (
-    <div>
+    <>
       <Navbar />
+    {isAuthenticated?<><div>
       <div className="container mx-auto p-4">
         {/* Header */}
         <header className="text-center mb-8">
@@ -178,14 +179,18 @@ const CommunityExchange = () => {
           )}
         </div>
 
-        {/* Footer */}
+        
         <footer className="text-center mt-8">
           <p className="text-muted-foreground">
             Join the sustainable fashion movement! 🌱
           </p>
         </footer>
+        
       </div>
-    </div>
+    </div></>:<div className="flex justify-center items-center">
+    <p>Login to access this page</p>  </div>}
+    
+    </>
   );
 };
 

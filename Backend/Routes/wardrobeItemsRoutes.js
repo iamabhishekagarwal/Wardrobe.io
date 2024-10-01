@@ -199,14 +199,14 @@ routerW.post("/maxCounts", async (req, res) => {
   try {
     // Get the wardrobe item with the maximum count for 'top' for the specified user
     const maxTop = await prismaW.wardrobeItem.findFirst({
-      where: { category: "top", userId: parseInt(userId) }, // Add userId condition
+      where: { category: { equals: "top", mode: "insensitive" }, userId: userId }, // Add userId condition
       orderBy: { count: "desc" }, // Order by count in descending order
       take: 1, // Take the top result
     });
 
     // Get the wardrobe item with the maximum count for 'bottom' for the specified user
     const maxBottom = await prismaW.wardrobeItem.findFirst({
-      where: { category: "bottom", userId: parseInt(userId) }, // Add userId condition
+      where: { category: { equals: "bottom", mode: "insensitive" }, userId: userId }, // Add userId condition
       orderBy: { count: "desc" },
       take: 1,
     });
@@ -220,7 +220,7 @@ routerW.post("/maxCounts", async (req, res) => {
       orderBy: { count: "desc" },
       take: 1,
     });
-
+    console.log(maxBottom)
     // Return the items with the maximum count for each category
     res.status(200).json({
       maxTop: maxTop || null, // Return null if no top found
@@ -242,14 +242,14 @@ routerW.post("/minCounts", async (req, res) => {
     const { userId } = req.body;
     // Get the wardrobe item with the minimum count for 'top'
     const minTop = await prismaW.wardrobeItem.findFirst({
-      where: { category: "top", userId: parseInt(userId) },
+      where: { category: { equals: "top", mode: "insensitive" }, userId: parseInt(userId) },
       orderBy: { count: "asc" }, // Order by count in ascending order
       take: 1, // Take the top result
     });
 
     // Get the wardrobe item with the minimum count for 'bottom'
     const minBottom = await prismaW.wardrobeItem.findFirst({
-      where: { category: "bottom", userId: parseInt(userId) },
+      where: { category: { equals: "bottom", mode: "insensitive" }, userId: parseInt(userId) },
       orderBy: { count: "asc" },
       take: 1,
     });
