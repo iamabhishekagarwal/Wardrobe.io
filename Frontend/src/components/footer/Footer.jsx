@@ -66,7 +66,7 @@ const EnhancedFooter = () => {
 
         {/* Copyright Section */}
         <div>
-          <p className="text-sm">© {new Date().getFullYear()} Your Company Name. All rights reserved.</p>
+          <p className="text-sm">© {new Date().getFullYear()} Wardrobe.io. All rights reserved.</p>
         </div>
       </div>
     </footer>
