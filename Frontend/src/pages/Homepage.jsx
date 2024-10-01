@@ -116,7 +116,7 @@ const Homepage = () => {
                     {/* Image */}
                     <CardItem className="rounded-t-lg">
                       <img
-                        src={item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:5172${item.imageUrl}`}
+                        src={item.imageUrl.startsWith('http') ? item.imageUrl : `https://wardrobe-io.onrender.com${item.imageUrl}`}
                         alt={item.name}
                         className="w-full h-48 object-cover"
                       />

@@ -68,7 +68,9 @@ const CommunityExchange = () => {
   useEffect(() => {
     const fetchWardrobeItems = async () => {
       try {
-        const response = await axiosInstance.get("/wardrobeItems/getAllItems");
+        const response = await axiosInstance.post("/wardrobeItems/getItems",{
+          userId : userID
+        });
         setWardrobe(response.data); // Correctly set wardrobe items
       } catch (error) {
         console.error("Error fetching wardrobe items:", error);
@@ -86,7 +88,7 @@ const CommunityExchange = () => {
 
     fetchWardrobeItems();
     fetchListedItems();
-  }, []); // Empty dependency array to run only once on mount
+  }, [userID]); // Empty dependency array to run only once on mount
 
   const handleSetType = async (data) => {
     setType(data);

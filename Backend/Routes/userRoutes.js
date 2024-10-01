@@ -301,7 +301,7 @@ routerU.post('/compare-images', async(req, res) => {
     // Extract the type from the labels
     const detectedType = visionResponse.labels.find((label) => {
         let labelLower = label.toLowerCase();
-
+//
         // If the label contains 'shirt' in any form, map it to 'shirt'
         if (labelLower.includes('shirt')) {
             console.log('Detected Shirt Label:', labelLower);  // Debugging log

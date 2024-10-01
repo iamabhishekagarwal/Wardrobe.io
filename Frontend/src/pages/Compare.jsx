@@ -121,22 +121,6 @@ function Compare() {
     }
 
   }
-
-  // Fetch database images (placeholder)
-  const fetchDatabaseImages = async () => {
-    try {
-      const response = await fetch('/api/getDatabaseImages'); // Replace with actual API
-      const data = await response.json();
-      setDatabaseImages(data.images);
-    } catch (error) {
-      console.error('Error fetching database images:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDatabaseImages();
-  }, []);
-
   return (
   <>
       <Navbar />
@@ -196,7 +180,7 @@ function Compare() {
   ) : (
     <div className="flex justify-center">
       <img
-        src={`http://localhost:5172${imageUrl}`}
+        src={`https://wardrobe-io.onrender.com${imageUrl}`}
         alt="Compared Image"
         className="w-full max-w-xs h-auto rounded-lg shadow-lg border border-gray-300"
       />
