@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-white text-lg font-semibold">BrandName</div>
+        <div className="text-white text-lg font-semibold">Wardrobe.io</div>
         <ul className="flex space-x-8 text-white">
           <li className="hover:text-gray-400"><a href="/">Home</a></li>
           <li className="hover:text-gray-400"><a href="/wardrobe">Wardrobe</a></li>
