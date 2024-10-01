@@ -61,7 +61,7 @@ const Homepage = () => {
   useEffect(() => {
     if (userID) {
       axiosInstance
-        .post("/wardrobeItems/getItems", { data: { userId: userID } })
+        .post("/wardrobeItems/getItems",{userId: userID})
         .then((response) => {
           setItems(response.data);
           console.log(response.data);
