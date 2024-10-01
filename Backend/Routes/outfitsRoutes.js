@@ -9,30 +9,35 @@ const routerO = express.Router();
 const prismaO = new PrismaClient();
 
 async function suggestOutfit(clothes) {
-    let outfits = [];
-    // Filter clothes by category and occasion
-    const tops = clothes.filter(item => item.category === 'top');
-    const bottoms = clothes.filter(item => item.category === 'bottom');
-    const shoes = clothes.filter(item => item.category === 'shoe');
-    // Generate outfits based on matching occasion
-    tops.forEach((top) => {
-      bottoms.forEach((bottom) => {
-        shoes.forEach((shoe) => {
-          // Check if the occasion matches
-          if (top.occasion === bottom.occasion && bottom.occasion === shoe.occasion) {
-            outfits.push({
-              top: top.id,
-              bottom: bottom.id,
-              shoes: shoe.id,
-              occasion: top.occasion // Add occasion to the outfit
-            });
-          }
-        });
+  let outfits = [];
+  
+  const tops = clothes.filter(item => item.category.toLowerCase() === 'top');
+  const bottoms = clothes.filter(item => item.category.toLowerCase() === 'bottom');
+  const shoes = clothes.filter(item => item.category.toLowerCase() === 'shoe');
+  
+  console.log(tops + " " + bottoms + " " + shoes);
+  
+  tops.forEach((top) => {
+    bottoms.forEach((bottom) => {
+      shoes.forEach((shoe) => {
+        if (
+          top.occasion.toLowerCase() === bottom.occasion.toLowerCase() &&
+          bottom.occasion.toLowerCase() === shoe.occasion.toLowerCase()
+        ) {
+          outfits.push({
+            top: top.id,
+            bottom: bottom.id,
+            shoes: shoe.id,
+            occasion: top.occasion
+          });
+        }
       });
     });
-  
-    return outfits;
-  }
+  });
+
+  return outfits;
+}
+
   
 
 routerO.post("/generateOutfits", async (req, res) => {
@@ -42,6 +47,7 @@ routerO.post("/generateOutfits", async (req, res) => {
     const wardRobeItems = await prismaO.wardrobeItem.findMany({
       where: { userId: userId },
     });
+    console.log(wardRobeItems);
     let outfits = await suggestOutfit(wardRobeItems);
     res.status(200).json({ outfits: outfits });
   } catch (error) {
