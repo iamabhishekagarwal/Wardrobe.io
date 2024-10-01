@@ -43,8 +43,7 @@ const upload = multer({
 
 // Image upload and wardrobe item creation endpoint
 routerW.post("/addItems", upload.single("image"), async (req, res) => {
-  const { userId, name, category, color, description, occasion, type } =
-    req.body;
+  const { userId, name, category, color, description, occasion, type } = req.body;
 
   // Check if image is uploaded
   if (!req.file) {
@@ -60,6 +59,7 @@ routerW.post("/addItems", upload.single("image"), async (req, res) => {
       return res.status(400).json({ msg: "Invalid userId" });
     }
 
+    // Create the wardrobe item
     const wardrobeItem = await prismaW.wardrobeItem.create({
       data: {
         userId: parsedUserId,
@@ -72,13 +72,13 @@ routerW.post("/addItems", upload.single("image"), async (req, res) => {
         type: type || "casual",
       },
     });
+    
     res.status(201).json(wardrobeItem);
   } catch (error) {
-    res
-      .status(500)
-      .json({ msg: "Error creating wardrobe item", error: error.message });
+    res.status(500).json({ msg: "Error creating wardrobe item", error: error.message });
   }
 });
+
 
 // Fetch all wardrobe items
 routerW.get("/getAllItems", async (req, res) => {
