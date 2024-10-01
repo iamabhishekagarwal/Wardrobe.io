@@ -38,6 +38,7 @@ function OutFits() {
         }
       );
       const msg = response.data.msg;
+      console.log(msg);
       if (msg=="User verified successfully") {
         console.log(response.data.id)
         setUserID(response.data.id); 
@@ -55,7 +56,7 @@ function OutFits() {
               },
             }
           );
-          console.log(response.data.id)
+          console.log(response2.data.id)
         }
         catch(e){
           console.log("error sending req to signup")

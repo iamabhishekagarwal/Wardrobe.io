@@ -3,6 +3,7 @@ import Navbar from "../components/navbar/Navbar";
 import axiosInstance from "../api/AxiosInstance";
 import ItemCard from "../components/cards/ItemCard";
 import ListItemCard from "../components/cards/ListItemCard";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const CommunityExchange = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,6 +11,58 @@ const CommunityExchange = () => {
   const [type, setType] = useState("all");
   const [listedItems, setListedItems] = useState([]);
   const [wardrobe, setWardrobe] = useState([]);
+  const [userID,setUserID] = useState(undefined);
+  const {isAuthenticated,user} = useAuth0();
+
+  async function checkUser() {
+    try {
+      const response = await axiosInstance.post(
+        "/user/signin",
+        {
+          email: user.email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const msg = response.data.msg;
+      console.log(msg);
+      if (msg=="User verified successfully") {
+        console.log(response.data.id)
+        setUserID(response.data.id); 
+      }
+      else{
+        try{
+          const response2 = await axiosInstance.post('/user/signup',
+            {
+              email: user.email,
+              name: user.given_name ,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response2.data.id)
+        }
+        catch(e){
+          console.log("error sending req to signup")
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error fetching user id : ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkUser();
+    }  
+  })
 
   // Fetch items when the component mounts
   useEffect(() => {
