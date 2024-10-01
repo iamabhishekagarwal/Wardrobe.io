@@ -131,7 +131,7 @@ const WardrobeAnalyticsDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-2">{maxItems.maxTop.name}</p>
                 <div className="h-64 flex justify-center">
                   <img
-                    src={`https://wardrobeio.netlify.app/${maxItems.maxTop.imageUrl}`}
+                    src={`https://wardrobe-io.onrender.com${maxItems.maxTop.imageUrl}`}
                     alt={maxItems.maxTop.name}
                     className="max-h-full max-w-full object-contain"
                   />
@@ -151,7 +151,7 @@ const WardrobeAnalyticsDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-2">{maxItems.maxBottom.name}</p>
                 <div className="h-64 flex justify-center">
                   <img
-                    src={`https://wardrobeio.netlify.app/${maxItems.maxBottom.imageUrl}`}
+                    src={`https://wardrobe-io.onrender.com${maxItems.maxBottom.imageUrl}`}
                     alt={maxItems.maxBottom.name}
                     className="max-h-full max-w-full object-contain"
                   />
@@ -171,7 +171,7 @@ const WardrobeAnalyticsDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-2">{maxItems.maxShoes.name}</p>
                 <div className="h-64 flex justify-center">
                   <img
-                    src={`https://wardrobeio.netlify.app/${maxItems.maxShoes.imageUrl}`}
+                    src={`https://wardrobe-io.onrender.com${maxItems.maxShoes.imageUrl}`}
                     alt={maxItems.maxShoes.name}
                     className="max-h-full max-w-full object-contain"
                   />
@@ -195,7 +195,7 @@ const WardrobeAnalyticsDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-2">{minItems.minTop.name}</p>
                 <div className="h-64 flex justify-center">
                   <img
-                    src={`https://wardrobeio.netlify.app/${minItems.minTop.imageUrl}`}
+                    src={`https://wardrobe-io.onrender.com${minItems.minTop.imageUrl}`}
                     alt={minItems.minTop.name}
                     className="max-h-full max-w-full object-contain"
                   />
@@ -215,7 +215,7 @@ const WardrobeAnalyticsDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-2">{minItems.minBottom.name}</p>
                 <div className="h-64 flex justify-center">
                   <img
-                    src={`https://wardrobeio.netlify.app/${minItems.minBottom.imageUrl}`}
+                    src={`https://wardrobe-io.onrender.com${minItems.minBottom.imageUrl}`}
                     alt={minItems.minBottom.name}
                     className="max-h-full max-w-full object-contain"
                   />
@@ -235,7 +235,7 @@ const WardrobeAnalyticsDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-2">{minItems.minShoes.name}</p>
                 <div className="h-64 flex justify-center">
                   <img
-                    src={`https://wardrobeio.netlify.app/${minItems.minShoes.imageUrl}`}
+                    src={`https://wardrobe-io.onrender.com${minItems.minShoes.imageUrl}`}
                     alt={minItems.minShoes.name}
                     className="max-h-full max-w-full object-contain"
                   />
@@ -262,7 +262,7 @@ const WardrobeAnalyticsDashboard = () => {
                   <h5 className="text-xl font-bold text-gray-800">{item.name}</h5>
                   <div className="h-48 flex justify-center mt-4">
                     <img
-                      src={`https://wardrobeio.netlify.app/${item.imageUrl}`}
+                      src={`https://wardrobe-io.onrender.com${item.imageUrl}`}
                       alt={item.name}
                       className="max-h-full max-w-full object-contain"
                     />
