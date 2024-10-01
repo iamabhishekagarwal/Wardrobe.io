@@ -200,7 +200,7 @@ routerU.post("/signin", async (req, res) => {
         if (user) {
             return res.status(200).json({ msg: "User verified successfully", id: user.id });
         } else {
-            return res.status(404).json({ msg: "User not found" });
+            return res.status(200).json({ msg: "User not found" });
         }
     } catch (error) {
         res.status(500).json({ msg: "Error verifying user" });
