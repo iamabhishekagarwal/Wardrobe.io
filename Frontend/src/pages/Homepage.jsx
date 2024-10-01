@@ -6,21 +6,71 @@ import axiosInstance from "../api/AxiosInstance";
 import { CardContainer, CardBody, CardItem } from "../components/ui/CardContainer"; 
 import Typewriter from '../components/Typewriter'; 
 import image1 from '../assets/image1.webp'; 
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Homepage = () => {
   const [items, setItems] = useState([]);
+  const [userID, setUserID] = useState(undefined);
+  const { isAuthenticated, user } = useAuth0();
+
+  async function checkUser() {
+    try {
+      const response = await axiosInstance.post(
+        "/user/signin",
+        {
+          email: user.email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const msg = response.data.msg;
+      if (msg === "User verified successfully") {
+        setUserID(response.data.id); 
+      } else {
+        try {
+          const response2 = await axiosInstance.post('/user/signup',
+            {
+              email: user.email,
+              name: user.given_name,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          setUserID(response2.data.id);
+        } catch (e) {
+          console.log("Error signing up: " + e);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user id: ", error);
+    }
+  }
 
   useEffect(() => {
-    axiosInstance
-      .get("/wardrobeItems/getAllItems")
-      .then((response) => {
-        setItems(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching items:", error);
-      });
-  }, []);
+    if (isAuthenticated) {
+      checkUser();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (userID) {
+      axiosInstance
+        .post("/wardrobeItems/getItems", { data: { userId: userID } })
+        .then((response) => {
+          setItems(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching items:", error);
+        });
+    }
+  }, [userID]);
 
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen font-sans">
@@ -88,8 +138,6 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 };
