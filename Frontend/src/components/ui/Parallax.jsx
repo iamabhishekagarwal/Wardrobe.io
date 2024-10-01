@@ -94,7 +94,7 @@ const ProductCard = ({ product, translate }) => (
     transition={{ duration: 0.5 }} // Smooth transition of 0.5 seconds
   >
     <div className="mb-4">
-      <img src={`http://localhost:5172${product.imageUrl}`} alt={product.title} className="rounded-lg object-cover w-full h-48" />
+      <img src={import.meta.env.IMAGE_API+product.imageUrl} alt={product.title} className="rounded-lg object-cover w-full h-48" />
     </div>
     <h3 className="text-lg font-semibold text-white mb-2">{product.title}</h3> {/* Light text for title */}
     <p className="text-gray-300">{product.description}</p> {/* Lighter text for description */}
