@@ -46,7 +46,7 @@ const OutfitCard = ({ outfit }) => {
         {topItem && (
           <div className="flex flex-col items-center">
             <img
-              src={import.meta.env.IMAGE_API+topItem.imageUrl}
+              src={`https://wardrobe-io.onrender.com${topItem.imageUrl}`}
               alt={topItem.name}
               className="w-full h-auto rounded-lg mb-2"
             />
@@ -56,7 +56,7 @@ const OutfitCard = ({ outfit }) => {
         {bottomItem && (
           <div className="flex flex-col items-center">
             <img
-              src={`http://localhost:5172${bottomItem.imageUrl}`}
+              src={`https://wardrobe-io.onrender.com${bottomItem.imageUrl}`}
               alt={bottomItem.name}
               className="w-full h-auto rounded-lg mb-2"
             />
@@ -66,7 +66,7 @@ const OutfitCard = ({ outfit }) => {
         {shoesItem && (
           <div className="flex flex-col items-center">
             <img
-              src={`http://localhost:5172${shoesItem.imageUrl}`}
+              src={`https://wardrobe-io.onrender.com${shoesItem.imageUrl}`}
               alt={shoesItem.name}
               className="w-full h-auto rounded-lg mb-2"
             />
