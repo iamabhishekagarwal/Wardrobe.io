@@ -31,7 +31,7 @@ const ItemCard = ({ itemId }) => {
     return (
         <div className="border rounded-lg p-4 shadow-md hover:shadow-lg transition duration-200">
             <img
-                src={`http://localhost:5172${item.imageUrl}`}
+                src={import.meta.env.IMAGE_API+item.imageUrl}
                 alt={item.name}
                 className="w-full h-48 object-cover rounded-md mb-2"
             />

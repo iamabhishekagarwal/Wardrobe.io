@@ -196,7 +196,7 @@ function Compare() {
   ) : (
     <div className="flex justify-center">
       <img
-        src={`http://localhost:5172${imageUrl}`}
+        src={import.meta.env.IMAGE_API+imageUrl}
         alt="Compared Image"
         className="w-full max-w-xs h-auto rounded-lg shadow-lg border border-gray-300"
       />

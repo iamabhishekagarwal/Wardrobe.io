@@ -46,7 +46,7 @@ const OutfitCard = ({ outfit }) => {
         {topItem && (
           <div className="flex flex-col items-center">
             <img
-              src={`http://localhost:5172${topItem.imageUrl}`}
+              src={import.meta.env.IMAGE_API+topItem.imageUrl}
               alt={topItem.name}
               className="w-full h-auto rounded-lg mb-2"
             />

@@ -116,7 +116,7 @@ const Homepage = () => {
                     {/* Image */}
                     <CardItem className="rounded-t-lg">
                       <img
-                        src={item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:5172${item.imageUrl}`}
+                        src={import.meta.env.IMAGE_API+item.imageUrl}
                         alt={item.name}
                         className="w-full h-48 object-cover"
                       />
